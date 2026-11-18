@@ -1,0 +1,25 @@
+// Yayındaki siteye hızlı göz atma (gerçek veri, gerçek fotoğraf): node test/canli-site.mjs
+import { playwright, sayacli } from "./ortak.mjs";
+const { chromium } = playwright();
+const ADRES = process.env.ADRES || "https://yigitmutfakpanel-lgtm.github.io/tabela/";
+const { ok, bitir } = sayacli();
+const b = await chromium.launch();
+const ctx = await b.newContext({ viewport: { width: 375, height: 800 } });
+const p = await ctx.newPage();
+const errs = [];
+p.on("pageerror", (e) => errs.push(e.message));
+await p.goto(ADRES);
+await p.selectOption("#il", "35");
+await p.waitForSelector(".kart");
+await p.fill("#ara", "efes");
+await p.click('.kart:has(.ad:text-is("Efes")) button.git');
+await p.waitForFunction(() => !document.getElementById("rehberYukleniyor"), null, { timeout: 20000 });
+const govde = await p.textContent("#detayGovde");
+ok(govde.includes("Bir dakikada keşfet") && govde.includes("Celsus"), "Efes rehberi yayında");
+await p.waitForFunction(() => { const i = document.querySelector("#kapak img"); return i && i.complete && i.naturalWidth > 0; }, null, { timeout: 20000 }).catch(() => {});
+ok(await p.evaluate(() => { const i = document.querySelector("#kapak img"); return !!(i && i.naturalWidth > 0); }), "Efes fotoğrafı yüklendi");
+ok(!!(await p.$("#sesAna")) && (await p.textContent("#sesNot")).includes("Piper"), "hazır ses kaydı bağlı");
+await p.screenshot({ path: "canli-efes.png" });
+ok(errs.length === 0, "sayfa hatası yok " + errs.join(" / "));
+await b.close();
+bitir();
