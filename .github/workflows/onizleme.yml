@@ -1,0 +1,39 @@
+# Geliştirme dalları için önizleme verisi: gerçek Türkiye dosyasından konum listesi, fotoğraf listesi ve rehber
+# eşleşmesini üretir ve AYNI DALA kaydeder. Siteyi yayınlamaz; canlı siteye dokunmaz.
+name: Önizleme verisi (geliştirme dalı)
+on:
+  push:
+    branches: ["gelistirme/**"]
+    paths: ["arac/**", "index.html", "icerik/kaynak/**", ".github/workflows/onizleme.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: onizleme-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  veri:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Yer listeleri (Geofabrik)
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q osmium-tool
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/turkiye.osm.pbf" https://download.geofabrik.de/europe/turkey-latest.osm.pbf
+          bash arac/veri.sh "$RUNNER_TEMP/turkiye.osm.pbf"
+      - name: Fotoğraf listesi
+        continue-on-error: true
+        run: node arac/gorsel.mjs
+      - name: Rehber içerikleri
+        continue-on-error: true
+        run: node arac/icerik.mjs --baglanti
+      - name: Dala kaydet
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add veri icerik
+          if git diff --cached --quiet; then echo "Değişiklik yok"; else git commit -m "Önizleme verisi: $(date -u +%Y-%m-%d)" && git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"; fi

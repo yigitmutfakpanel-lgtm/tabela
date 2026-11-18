@@ -1,0 +1,60 @@
+{
+ "anahtar": "bergama",
+ "ad": "Bergama (Pergamon) Antik Kenti",
+ "eslesme": {
+  "wikidata": [
+   "Q18986"
+  ]
+ },
+ "kisa": "Bergama'nın üzerinde yükselen 335 metrelik tepe, bir zamanlar Helenistik dünyanın en güçlü krallıklarından birinin başkentiydi. Pergamon Krallığı döneminde teraslar üzerine kurulan tiyatrosu, tapınakları ve sarayıyla kent, dönemin önemli kültür merkezlerinden biri oldu. 2014'ten beri UNESCO Dünya Mirası Listesi'ndedir.",
+ "bolumler": [
+  {
+   "baslik": "Burası neresi?",
+   "metin": "Pergamon, İzmir'in Bergama ilçesinde, Bakırçay (antik adıyla Kaikos) ovasının kuzeyindeki sarp bir tepe üzerine kurulmuştur. Kent, bugünkü kıyıdan yaklaşık 26 kilometre içeridedir."
+  },
+  {
+   "baslik": "Adı nereden geliyor?",
+   "metin": "Antik kaynaklarda kentin adı, efsanevi kahraman Pergamos'a bağlanır. Bu bir söylencedir; adın kökeni kesin olarak bilinmez."
+  },
+  {
+   "baslik": "Tarihçesi",
+   "metin": "Pergamon'un adı yazılı belgelerde ilk kez MÖ 4. yüzyılın başlarında geçer. MÖ 3. yüzyılın başından MÖ 133'e kadar Attalos hanedanının yönettiği Pergamon Krallığı'nın başkenti oldu; bu dönemde kent surlarla çevrildi, saray, tapınak ve tiyatro gibi yapılar inşa edildi. Krallık MÖ 133'te Roma'ya bağlandıktan sonra da Pergamon, Batı Anadolu'nun önde gelen kentlerinden biri olarak kaldı."
+  },
+  {
+   "baslik": "Neden önemli?",
+   "metin": "Düz arazinin olmadığı bir tepede, teraslar kurularak planlanan kent, Helenistik dönem kentçiliğinin eşsiz örneklerinden biridir. Pergamon ayrıca Vahiy Kitabı'nda adı geçen 'Asya'nın yedi kilisesi'nden biridir."
+  },
+  {
+   "baslik": "Günümüzde",
+   "metin": "Kalıntılar, 1870'lerde bölgede demiryolu yapımında çalışan Alman mühendis Carl Humann tarafından fark edildi ve kazılar 1878'de başladı. Kazı ve onarım çalışmaları bugün de sürüyor."
+  }
+ ],
+ "ilginc": [
+  {
+   "metin": "Akropolün kurulduğu tepe andezit kayadan oluşur ve deniz seviyesinden 335 metre yükselir; tepenin üç yanı dik yamaçlarla iner."
+  }
+ ],
+ "kaynaklar": [
+  {
+   "ad": "Pergamon",
+   "kurum": "Vikipedi",
+   "url": "https://tr.wikipedia.org/w/index.php?title=Pergamon&oldid=38608747",
+   "erisim": "2026-11-18"
+  },
+  {
+   "ad": "Pergamon",
+   "kurum": "Vikipedi",
+   "url": "https://en.wikipedia.org/w/index.php?title=Pergamon&oldid=1382745208",
+   "erisim": "2026-11-18"
+  },
+  {
+   "ad": "Wikidata Q18986",
+   "kurum": "Wikidata",
+   "url": "https://www.wikidata.org/wiki/Q18986",
+   "erisim": "2026-11-18"
+  }
+ ],
+ "dogrulama": "2026-11-18",
+ "surum": 1,
+ "not": "Metin, kaynaklardaki bilgiler karşılaştırılarak özgün olarak yazıldı; kaynak metinlerden doğrudan kopyalanmadı."
+}

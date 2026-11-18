@@ -546,11 +546,20 @@ function kayitYap(el) {
   const k = { n: ad, a: Math.round(enlem * 1e5) / 1e5, o: Math.round(boylam * 1e5) / 1e5, c };
   const w = vikipedi(t);
   if (w) k.w = w;
+  // Kalıcı kimlik: OSM nesne tipi + kimliği (n/w/r) ve varsa Wikidata kimliği. Rehber içeriği bunlarla eşleşir.
+  const i = osmKimligi(el);
+  if (i) k.i = i;
+  if (/^Q\d+$/.test(t.wikidata || "")) k.d = t.wikidata;
   return k;
+}
+function osmKimligi(el) {
+  if (el.oid && /^[nwr]\d+$/.test(el.oid)) return el.oid;
+  const tip = { node: "n", way: "w", relation: "r" }[el.type];
+  return tip && el.id ? tip + el.id : null;
 }
 
 function tekillestir(kayitlar) {
-  const puan = (k) => (KAT_ONCELIK[k.c] || 1) - (k.w ? 0.5 : 0);
+  const puan = (k) => (KAT_ONCELIK[k.c] || 1) - (k.w ? 0.5 : 0) - (k.d ? 0.25 : 0);
   const sirali = kayitlar.slice().sort((x, y) => puan(x) - puan(y));
   const gruplar = new Map();
   const sonuc = [];
@@ -558,7 +567,7 @@ function tekillestir(kayitlar) {
     const anahtar = sade(k.n);
     const grup = gruplar.get(anahtar) || [];
     const ayni = grup.find((g) => mesafe(g.a, g.o, k.a, k.o) < TEKIL_MESAFE);
-    if (ayni) { if (!ayni.w && k.w) ayni.w = k.w; continue; }
+    if (ayni) { if (!ayni.w && k.w) ayni.w = k.w; if (!ayni.d && k.d) ayni.d = k.d; continue; }
     grup.push(k);
     gruplar.set(anahtar, grup);
     sonuc.push(k);

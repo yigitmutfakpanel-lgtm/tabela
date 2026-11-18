@@ -38,13 +38,23 @@ jobs:
           curl -fsSL --retry 3 -o "$RUNNER_TEMP/turkiye.osm.pbf" https://download.geofabrik.de/europe/turkey-latest.osm.pbf
           ls -lh "$RUNNER_TEMP/turkiye.osm.pbf"
           bash arac/veri.sh "$RUNNER_TEMP/turkiye.osm.pbf"
+      # Fotoğraflar: yerin kendi Wikidata kimliğindeki görsel + Commons lisansı (isimle eşleştirme yok)
+      - name: Fotoğraf listesini yenile
+        if: github.event_name != 'push'
+        continue-on-error: true
+        timeout-minutes: 20
+        run: node arac/gorsel.mjs
+      # Rehber metinleri: icerik/kaynak/*.json denetlenir ve yerlere kesin kimlikle bağlanır
+      - name: Rehber içeriklerini hazırla
+        continue-on-error: true
+        run: node arac/icerik.mjs ${{ github.event_name != 'push' && '--baglanti' || '' }}
       - name: Yeni listeyi depoya kaydet
         if: always() && github.event_name != 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ ! -d veri ]; then echo "Liste klasörü yok, kaydedilecek bir şey yok"; exit 0; fi
-          git add veri
+          git add veri icerik
           if git diff --cached --quiet; then echo "Değişiklik yok"; else git commit -m "Veri: $(date -u +%Y-%m-%d)" && git pull --rebase origin main && git push; fi
       - name: Siteyi hazırla
         run: |
@@ -53,6 +63,8 @@ jobs:
           mkdir _site
           cp -r index.html sw.js manifest.webmanifest icons fonts _site/
           if [ -d veri ]; then cp -r veri _site/; fi
+          if [ -d icerik ]; then mkdir -p _site/icerik && cp -r icerik/dizin.json icerik/il _site/icerik/ 2>/dev/null || true; fi
+          if [ -d icerik/ses ]; then cp -r icerik/ses _site/icerik/; fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

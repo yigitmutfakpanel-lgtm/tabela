@@ -1,0 +1,8 @@
+ani.json: konum listesinde eşleşen yer yok (Q546010); yayınlanmadı
+bergama.json: konum listesinde eşleşen yer yok (Q18986); yayınlanmadı
+divrigi.json: konum listesinde eşleşen yer yok (Q581641); yayınlanmadı
+efes.json: konum listesinde eşleşen yer yok (Q47611, Q64699469); yayınlanmadı
+gobeklitepe.json: konum listesinde eşleşen yer yok (Q214944); yayınlanmadı
+hierapolis-pamukkale.json: konum listesinde eşleşen yer yok (Q7428276, Q105893254); yayınlanmadı
+nemrut.json: konum listesinde eşleşen yer yok (Q207917); yayınlanmadı
+sumela.json: konum listesinde eşleşen yer yok (Q1419157); yayınlanmadı

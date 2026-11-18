@@ -54,6 +54,15 @@ function iliskiKimligi(f) {
   return null;
 }
 
+// osmium "type_id" kimliği → kalıcı yer kimliği (n123 / w123 / r123). Alan: a(2*yol) ya da a(2*ilişki+1)
+function nesneKimligi(f) {
+  const m = /^([nwra])(\d+)$/.exec(String(f.id ?? ""));
+  if (!m) return null;
+  if (m[1] !== "a") return m[1] + m[2];
+  const n = Number(m[2]);
+  return n % 2 ? "r" + (n - 1) / 2 : "w" + n / 2;
+}
+
 // --- geometri yardımcıları ([boylam, enlem])
 function cokgenler(g) {
   if (!g) return [];
@@ -159,7 +168,7 @@ for await (const f of satirlar(YER_DOSYA)) {
   if (!m) continue;
   const d = yerlesebilir.find((q) => icindeMi(m[0], m[1], q));
   if (!d) continue;
-  gruplar.get(d.id).push({ lat: m[1], lon: m[0], tags: t });
+  gruplar.get(d.id).push({ lat: m[1], lon: m[0], tags: t, oid: nesneKimligi(f) });
   yerlesen++;
 }
 console.log(`${okunan} adlı nesne okundu, ${yerlesen} tanesi bir ilçeye yerleşti`);
