@@ -576,9 +576,9 @@ async function ilKimlikleri() {
   return s.v;
 }
 async function ilKimlikleriGetir() {
+  // Etiket dizininden okunur (alan taraması yok): birkaç saniyede döner
   const veri = await overpass(`[out:json][timeout:60];
-area["ISO3166-1"="TR"]["admin_level"="2"]->.tr;
-rel(area.tr)["boundary"="administrative"]["admin_level"="4"];
+rel["boundary"="administrative"]["admin_level"="4"]["ISO3166-2"~"^TR-[0-9][0-9]$"];
 out tags;`);
   const isoIle = {}, adIle = {};
   for (const el of veri.elements) {
