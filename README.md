@@ -13,6 +13,7 @@ Adres: https://yigitmutfakpanel-lgtm.github.io/tabela/
 - `index.html`: uygulamanın tamamı (HTML + CSS + JS tek dosya). `sw.js` internetsiz açılış, `manifest.webmanifest` + `icons/` ana ekran, `fonts/` Overpass yazı tipi.
 - `veri/`: 81 ilin ilçe ve yer listesi. `.github/workflows/yayin.yml` ayda bir `arac/veri.mjs`'i çalıştırıp OpenStreetMap'ten yeniler. Uygulama önce bu dosyaları okur; bulamazsa OpenStreetMap'e (Overpass) canlı sorar.
 - Kategori ve sorgu kuralları tek yerde: `index.html` içindeki `<cekirdek>` bölümü. Veri üretici de aynı kodu kullanır.
+- İlk liste: 18.11.2026 (11 il; kalan iller için uygulama canlı sorgular).
 - Elle veri yenileme: Actions → "Yayın ve aylık veri" → Run workflow.
 
 ## Lisanslar
