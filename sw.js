@@ -1,7 +1,7 @@
 // Kahverengi Tabela service worker: uygulama kabuğu cihazda kalır, internet yokken de açılır.
 // Yer listeleri burada değil, sayfanın kendi kaydında (localStorage) durur.
 // Yeni sürüm yayınlarken SURUM'u artır.
-const SURUM = "tabela-4";
+const SURUM = "tabela-5";
 // Aylık veri dosyaları ayrı kapta: sürüm değişince silinmez
 const VERI_KABI = "tabelaveri";
 const KABUK = [
@@ -38,6 +38,16 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.includes("/veri/")) {
     e.respondWith((async () => {
       const kap = await caches.open(VERI_KABI);
+      // Uygulama "reload" isterse (Türkiye listesini indirirken, aylık yenilemede): önce ağ
+      if (istek.cache === "reload") {
+        try {
+          const r = await fetch(istek);
+          if (r.ok) await kap.put(istek, r.clone());
+          return r;
+        } catch (err) {
+          return (await kap.match(istek, { ignoreSearch: true })) || Response.error();
+        }
+      }
       const kayit = await kap.match(istek, { ignoreSearch: true });
       const ag = fetch(istek).then((r) => { if (r.ok) kap.put(istek, r.clone()); return r; });
       if (kayit) { e.waitUntil(ag.catch(() => {})); return kayit; }

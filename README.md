@@ -6,7 +6,7 @@ Adres: https://yigitmutfakpanel-lgtm.github.io/tabela/
 
 - Bir yere dokununca Google Haritalar bulunduğun yerden yol tarifiyle açılır.
 - "Yakınımdakiler": 30 km çevredeki yerler, uzaklığa göre.
-- Ana ekrana eklenir; daha önce açılan yerler internetsiz de görünür.
+- Ana ekrana eklenir. İlk açılışta bütün Türkiye listesi (81 il) telefona iner; sonra il, ilçe, arama ve Yakınımdakiler internetsiz çalışır. Android'de "Başka harita" ile çevrimdışı harita uygulamalarına (Organic Maps, OsmAnd) yol tarifi açılır.
 - Sunucu, hesap, anahtar, ücret yok.
 
 ## Nasıl çalışır

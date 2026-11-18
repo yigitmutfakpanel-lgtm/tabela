@@ -156,10 +156,10 @@
     border-radius: 6px; padding: 4px 7px;
   }
   .ok { flex: none; width: 22px; height: 22px; opacity: .9; }
+  .kart .ekler { display: flex; flex-wrap: wrap; gap: 8px; margin: -6px 14px 12px 72px; }
   .kart a.wiki {
     display: flex; align-items: center; gap: 6px;
-    margin: -6px 14px 12px 72px; min-height: 40px; padding: 0 12px;
-    width: max-content; max-width: calc(100% - 86px);
+    min-height: 44px; padding: 0 12px;
     border-radius: 8px; border: 2px solid rgba(255,255,255,.75);
     color: #fff; text-decoration: none; font-size: 15px; font-weight: 800;
   }
@@ -200,6 +200,9 @@
     background: var(--tabela); color: #fff; font-weight: 800; font-size: 16px; cursor: pointer;
   }
   .serit button.kapat { background: transparent; color: var(--soluk); padding: 0 10px; font-size: 22px; }
+  .serit .cubuk { display: block; height: 8px; margin-top: 8px; border-radius: 4px; background: var(--cizgi); overflow: hidden; }
+  .serit .cubuk[hidden] { display: none; }
+  .serit .cubuk span { display: block; height: 100%; width: 0; background: var(--tabela); transition: width .3s; }
   .serit.cevrim { background: #FFF6E5; border-color: var(--vurgu); }
   .not { margin: 4px 0 0; font-size: 14px; color: #8A5A12; }
   footer { text-align: center; color: var(--soluk); font-size: 13px; padding: 4px 16px 28px; }
@@ -234,7 +237,12 @@
 </header>
 
 <main>
-  <div id="cevrimdisi" class="serit cevrim" hidden role="status"><span aria-hidden="true">📴</span><span class="yazi">İnternet yok. Daha önce açtığın yerler cihazda kayıtlı, onlar gösteriliyor.</span></div>
+  <div id="cevrimdisi" class="serit cevrim" hidden role="status"><span aria-hidden="true">📴</span><span class="yazi" id="cevrimYazi">İnternet yok. Daha önce açtığın yerler cihazda kayıtlı, onlar gösteriliyor.</span></div>
+  <div id="indirSerit" class="serit" hidden role="status">
+    <span aria-hidden="true">📦</span>
+    <span class="yazi"><span id="indirYazi"></span><span class="cubuk" id="indirCubukDis" hidden><span id="indirCubuk"></span></span></span>
+    <button type="button" class="kapat" id="indirKapat" aria-label="Kapat">×</button>
+  </div>
   <div id="kurSerit" class="serit" hidden>
     <span aria-hidden="true">📲</span>
     <span class="yazi" id="kurYazi">Uygulama gibi kullanmak için ana ekrana ekle.</span>
@@ -244,7 +252,7 @@
   <div id="ozet" class="ozet" aria-live="polite"></div>
   <div id="icerik"></div>
 </main>
-<footer>Veriler © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> katkıcıları.<span id="veriTarih"></span> Yol tarifi Google Haritalar'da açılır.</footer>
+<footer>Veriler © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> katkıcıları.<span id="veriTarih"></span><span id="cihazDurum"></span> Yol tarifi Google Haritalar'da açılır.</footer>
 
 <script>
 "use strict";
@@ -690,20 +698,22 @@ let yerelIndeks = null;
 async function yerelIndeksi() {
   if (yerelIndeks) return yerelIndeks;
   try {
-    const r = await fetch(VERI_YOLU + "iller.json");
+    let r = null;
+    if (navigator.onLine !== false) { try { r = await fetch(VERI_YOLU + "iller.json", { cache: "reload" }); } catch (e) { r = null; } }
+    if (!r || !r.ok) r = await fetch(VERI_YOLU + "iller.json");
     if (!r.ok) return null;
     const j = await r.json();
     if (!j || !j.iller || !Object.keys(j.iller).length) return null;
     yerelIndeks = j;
     const t = $("veriTarih");
-    if (t && j.tarih) t.textContent = ` Liste tarihi: ${j.tarih.split("-").reverse().join(".")}.`;
+    if (t && j.tarih) t.textContent = ` Liste tarihi: ${tarihGoster(j.tarih)}.`;
     return j;
   } catch (e) { return null; }
 }
 const ilDosyalari = new Map();
 function yerelIl(plaka) {
   if (!ilDosyalari.has(plaka)) {
-    const s = fetch(`${VERI_YOLU}il/${String(plaka).padStart(2, "0")}.json`)
+    const s = fetch(ilYolu(plaka))
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then((j) => { if (!j || !j.ilceler) throw new Error("Geçersiz dosya"); return j; });
     s.catch(() => ilDosyalari.delete(plaka));
@@ -711,6 +721,82 @@ function yerelIl(plaka) {
   }
   return ilDosyalari.get(plaka);
 }
+const tarihGoster = (iso) => iso.split("-").reverse().join(".");
+const ilYolu = (p) => `${VERI_YOLU}il/${String(p).padStart(2, "0")}.json`;
+const VERI_KABI = "tabelaveri"; // sw.js ile aynı ad
+
+// Bütün Türkiye listesini telefona indirir (arka planda, bir kez; ayda bir yenilenir).
+// Bittiğinde uygulama harita sunucusuna hiç ihtiyaç duymaz.
+let indiriliyor = false;
+async function turkiyeyiIndir() {
+  if (indiriliyor) return;
+  if (!("caches" in window) || navigator.onLine === false) return indirmeDurumu();
+  const ix = await yerelIndeksi();
+  if (!ix) return indirmeDurumu();
+  indiriliyor = true;
+  try {
+    const kap = await caches.open(VERI_KABI);
+    const tumu = Object.keys(ix.iller);
+    const tazeMi = ayarOku("indirilenTarih") === ix.tarih;
+    const eksik = [];
+    for (const p of tumu) {
+      if (!tazeMi || !(await kap.match(new URL(ilYolu(p), location.href).href, { ignoreSearch: true }))) eksik.push(p);
+    }
+    if (!eksik.length) { ayarYaz("indirilenTarih", ix.tarih); return; }
+    const toplamB = eksik.reduce((t, p) => t + (ix.iller[p].b || 40000), 0);
+    let biten = 0, hata = 0;
+    indirmeGoster(0, eksik.length, toplamB);
+    const sira = eksik.slice();
+    await Promise.all([1, 2, 3].map(async () => {
+      for (let p = sira.shift(); p; p = sira.shift()) {
+        try {
+          const r = await fetch(ilYolu(p), { cache: "reload" }); // sw.js bunu kaba yazar
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          await r.arrayBuffer();
+          ilDosyalari.delete(+p);
+        } catch (e) { hata++; }
+        biten++;
+        indirmeGoster(biten, eksik.length, toplamB);
+      }
+    }));
+    if (!hata) ayarYaz("indirilenTarih", ix.tarih);
+  } catch (e) {
+  } finally {
+    indiriliyor = false;
+    indirmeDurumu();
+  }
+}
+function indirmeGoster(biten, toplam, bayt) {
+  const serit = $("indirSerit");
+  serit.hidden = false;
+  const mb = (bayt / 1048576).toFixed(1).replace(".", ",");
+  $("indirYazi").textContent = `İnternetsiz kullanım için Türkiye listesi indiriliyor (yaklaşık ${mb} MB): ${biten}/${toplam} il`;
+  $("indirCubuk").style.width = Math.round((biten / Math.max(1, toplam)) * 100) + "%";
+  $("indirCubukDis").hidden = false;
+  $("indirKapat").hidden = true;
+}
+async function indirmeDurumu() {
+  const ix = await yerelIndeksi();
+  const serit = $("indirSerit");
+  const durumYazi = $("cihazDurum");
+  if (!ix) { serit.hidden = true; if (durumYazi) durumYazi.textContent = ""; return; }
+  const tamam = ayarOku("indirilenTarih") === ix.tarih;
+  const iller = Object.keys(ix.iller).length;
+  const yer = Object.values(ix.iller).reduce((t, i) => t + (i.s || 0), 0).toLocaleString("tr-TR");
+  if (durumYazi) durumYazi.textContent = tamam ? ` 📦 Telefonda: ${iller} il, ${yer} yer.` : "";
+  $("indirCubukDis").hidden = true;
+  $("indirKapat").hidden = false;
+  if (tamam) {
+    if (ayarOku("indirmeBildirildi") === ix.tarih) { serit.hidden = true; return; }
+    $("indirYazi").textContent = `Hazır: ${iller} il, ${yer} yer telefonda. Artık internetsiz de çalışır.`;
+    serit.hidden = false;
+    ayarYaz("indirmeBildirildi", ix.tarih);
+  } else if (navigator.onLine === false) {
+    $("indirYazi").textContent = "Türkiye listesi henüz tam inmedi. İnternete bağlanınca kendiliğinden tamamlanır.";
+    serit.hidden = false;
+  } else serit.hidden = true;
+}
+
 async function yerelBolge(plaka, relId, tumIl) {
   const ix = await yerelIndeksi();
   if (!ix || !ix.iller[plaka]) return null;
@@ -753,6 +839,7 @@ const durum = {
 
 const el = { il: $("il"), ilce: $("ilce"), yakin: $("yakin"), ara: $("ara"), cipler: $("cipler"), ozet: $("ozet"), icerik: $("icerik") };
 
+const ANDROID = /android/i.test(navigator.userAgent);
 function haritaAdresi(k) {
   return `https://www.google.com/maps/dir/?api=1&destination=${k.a},${k.o}&travelmode=driving`;
 }
@@ -815,12 +902,13 @@ function kartHtml(k) {
   const [katAdi, simge] = KAT[k.c];
   const uzak = k.d != null ? `<span class="uzak">${kmYaz(k.d)}</span>` : "";
   const wiki = k.w ? `<a class="wiki" href="${kacir(k.w)}" target="_blank" rel="noopener">📖 Vikipedi</a>` : "";
+  const geo = ANDROID ? `<a class="wiki" href="geo:${k.a},${k.o}?q=${k.a},${k.o}(${encodeURIComponent(k.n)})">🗺️ Başka harita</a>` : "";
   return `<li class="kart"><a class="git" href="${haritaAdresi(k)}" target="_blank" rel="noopener" aria-label="${kacir(k.n)}, ${kacir(katAdi)}: Google Haritalar'da yol tarifi">` +
     `<span class="ikon" aria-hidden="true"><span>${simge}</span></span>` +
     `<span class="metin"><span class="ad">${kacir(k.n)}</span><span class="tur">${kacir(katAdi)}</span></span>` +
     uzak +
     `<svg class="ok" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>` +
-    `</a>${wiki}</li>`;
+    `</a>${wiki || geo ? `<div class="ekler">${wiki}${geo}</div>` : ""}</li>`;
 }
 
 function listeyiCiz() {
@@ -929,7 +1017,6 @@ async function ilceSecildi(mevcutNo) {
   yukleniyor(`${bolgeAdi} yerleri yükleniyor…`);
   try {
     const hazir = await yerelBolge(plaka, relId, tumIl);
-    if (hazir) onbellekYaz("y:" + relId, hazir); // internetsiz "Yakınımdakiler" için de cihazda dursun
     const s = hazir ? { v: hazir, eski: false } : await bolgeYerleri(relId);
     if (no !== durum.istek) return;
     yerleriGoster(s.v, bolgeAdi, s.eski ? `İnternet yok: ${tarihYaz(s.t)} kaydedilen liste gösteriliyor.` : "");
@@ -996,7 +1083,13 @@ function baglantiAciklama(bas) {
 // ---------------------------------------------------------------------------
 const tekBasina = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 
-function cevrimDurumu() { $("cevrimdisi").hidden = navigator.onLine !== false; }
+function cevrimDurumu() {
+  const yok = navigator.onLine === false;
+  $("cevrimdisi").hidden = !yok;
+  if (yok) $("cevrimYazi").textContent = ayarOku("indirilenTarih")
+    ? "İnternet yok. Türkiye listesi telefonda; arama, il, ilçe ve Yakınımdakiler çalışır. Yol tarifi için harita uygulamasının çevrimdışı haritası gerekir."
+    : "İnternet yok. Daha önce açtığın yerler cihazda kayıtlı, onlar gösteriliyor.";
+}
 
 function uygulamaKur() {
   if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
@@ -1005,7 +1098,8 @@ function uygulamaKur() {
   // Tarayıcı yer açmak için kayıtları silmesin
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
-  window.addEventListener("online", cevrimDurumu);
+  $("indirKapat").addEventListener("click", () => { $("indirSerit").hidden = true; });
+  window.addEventListener("online", () => { cevrimDurumu(); turkiyeyiIndir(); });
   window.addEventListener("offline", cevrimDurumu);
   cevrimDurumu();
 
@@ -1057,6 +1151,8 @@ el.cipler.addEventListener("click", (e) => {
 
 ilSecenekleri();
 uygulamaKur();
+// Uygulama açılır açılmaz değil, ilk ekran çizildikten biraz sonra
+setTimeout(turkiyeyiIndir, 1500);
 (function () {
   const sonIl = +(ayarOku("il") || 0);
   if (sonIl && ILLER.some((i) => i[0] === sonIl)) {

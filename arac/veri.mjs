@@ -106,8 +106,9 @@ async function ilIsle(plaka, ad) {
     const toplam = Object.values(ilceYerleri).reduce((t, l) => t + l.length, 0);
     // Sunucu yarım cevap verdiyse (öncekinin yarısından az) eskisini koru
     if (eski && eski.s && toplam < eski.s * 0.5) return koru(`yalnız ${toplam} yer geldi (önce ${eski.s})`);
-    yaz(plakaDosya(plaka), { tarih: indeks.tarih, ilceler: ilceYerleri });
-    indeks.iller[plaka] = { id, ad, k: kutu(ilceYerleri), s: toplam, ilce: ilceler.map((d) => ({ id: d.id, n: d.n })) };
+    const dosya = { tarih: indeks.tarih, ilceler: ilceYerleri };
+    yaz(plakaDosya(plaka), dosya);
+    indeks.iller[plaka] = { id, ad, k: kutu(ilceYerleri), s: toplam, b: JSON.stringify(dosya).length, ilce: ilceler.map((d) => ({ id: d.id, n: d.n })) };
     yeni++;
     console.log(`${ad}: ${ilceler.length} ilçe, ${toplam} yer (${Math.round((Date.now() - t0) / 1000)} sn)`);
   } catch (e) {
