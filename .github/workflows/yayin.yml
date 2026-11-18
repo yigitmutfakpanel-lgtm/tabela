@@ -19,7 +19,7 @@ concurrency:
 jobs:
   yayin:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 90
     environment:
       name: github-pages
       url: ${{ steps.yayin.outputs.page_url }}
@@ -28,11 +28,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # OpenStreetMap'in hazır Türkiye dosyası (Geofabrik, ~600 MB) indirilir ve süzülür; harita sunucusuna sorgu gitmez
       - name: Yer listelerini yenile
         if: github.event_name != 'push'
         continue-on-error: true
-        timeout-minutes: 120
-        run: node arac/veri.mjs
+        timeout-minutes: 60
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q osmium-tool
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/turkiye.osm.pbf" https://download.geofabrik.de/europe/turkey-latest.osm.pbf
+          ls -lh "$RUNNER_TEMP/turkiye.osm.pbf"
+          bash arac/veri.sh "$RUNNER_TEMP/turkiye.osm.pbf"
       - name: Yeni listeyi depoya kaydet
         if: always() && github.event_name != 'push'
         run: |
