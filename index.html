@@ -838,6 +838,12 @@ function yerelIl(plaka) {
   return ilDosyalari.get(plaka);
 }
 const tarihGoster = (iso) => iso.split("-").reverse().join(".");
+// Listenin sürüm damgası: aynı gün yeniden üretilen liste de "yeni" sayılsın diye tarih tek başına yetmez.
+// Üretici damga yazıyorsa o; eski dizinlerde tarih + dosya boyutlarının toplamı.
+function veriDamgasi(ix) {
+  if (ix.damga) return ix.damga;
+  return ix.tarih + ":" + Object.values(ix.iller).reduce((t, i) => t + (i.b || 0) + (i.s || 0), 0);
+}
 const ilYolu = (p) => `${VERI_YOLU}il/${String(p).padStart(2, "0")}.json`;
 const VERI_KABI = "tabelaveri"; // sw.js ile aynı ad
 
@@ -865,10 +871,10 @@ async function turkiyeyiIndir() {
   try {
     const kap = await caches.open(VERI_KABI);
     const tumu = Object.keys(ix.iller);
-    const tazeMi = ayarOku("indirilenTarih") === ix.tarih;
+    const tazeMi = ayarOku("indirilenTarih") === veriDamgasi(ix);
     if (!tazeMi) onbellekTazele(VERI_KABI, /\/veri\/gorsel\//); // yeni ayın fotoğraf listeleri
     // Bu ay inen iller tek tek işaretlenir: yarıda kalırsa yalnız eksikler yeniden iner
-    const bitenAnahtar = "inenIller:" + ix.tarih;
+    const bitenAnahtar = "inenIller:" + veriDamgasi(ix);
     let biten0 = [];
     try { biten0 = JSON.parse(ayarOku(bitenAnahtar) || "[]"); } catch (e) { biten0 = []; }
     const inen = new Set(biten0.map(String));
@@ -877,7 +883,7 @@ async function turkiyeyiIndir() {
       const kayitli = await kap.match(new URL(ilYolu(p), location.href).href, { ignoreSearch: true });
       if (!kayitli || (!tazeMi && !inen.has(String(p)))) eksik.push(p);
     }
-    if (!eksik.length) { ayarYaz("indirilenTarih", ix.tarih); ayarYaz(bitenAnahtar, null); return; }
+    if (!eksik.length) { ayarYaz("indirilenTarih", veriDamgasi(ix)); ayarYaz(bitenAnahtar, null); return; }
     const toplamB = eksik.reduce((t, p) => t + (ix.iller[p].b || 40000), 0);
     let biten = 0, hata = 0;
     indirmeGoster(0, eksik.length, toplamB);
@@ -896,7 +902,7 @@ async function turkiyeyiIndir() {
         indirmeGoster(biten, eksik.length, toplamB);
       }
     }));
-    if (!hata) { ayarYaz("indirilenTarih", ix.tarih); ayarYaz(bitenAnahtar, null); }
+    if (!hata) { ayarYaz("indirilenTarih", veriDamgasi(ix)); ayarYaz(bitenAnahtar, null); }
   } catch (e) {
   } finally {
     indiriliyor = false;
@@ -917,17 +923,17 @@ async function indirmeDurumu() {
   const serit = $("indirSerit");
   const durumYazi = $("cihazDurum");
   if (!ix) { serit.hidden = true; if (durumYazi) durumYazi.textContent = ""; return; }
-  const tamam = ayarOku("indirilenTarih") === ix.tarih;
+  const tamam = ayarOku("indirilenTarih") === veriDamgasi(ix);
   const iller = Object.keys(ix.iller).length;
   const yer = Object.values(ix.iller).reduce((t, i) => t + (i.s || 0), 0).toLocaleString("tr-TR");
   if (durumYazi) durumYazi.textContent = tamam ? ` 📦 Telefonda: ${iller} il, ${yer} yer.` : "";
   $("indirCubukDis").hidden = true;
   $("indirKapat").hidden = false;
   if (tamam) {
-    if (ayarOku("indirmeBildirildi") === ix.tarih) { serit.hidden = true; return; }
+    if (ayarOku("indirmeBildirildi") === veriDamgasi(ix)) { serit.hidden = true; return; }
     $("indirYazi").textContent = `Hazır: ${iller} il, ${yer} yer telefonda. Artık internetsiz de çalışır.`;
     serit.hidden = false;
-    ayarYaz("indirmeBildirildi", ix.tarih);
+    ayarYaz("indirmeBildirildi", veriDamgasi(ix));
   } else if (navigator.onLine === false) {
     $("indirYazi").textContent = "Türkiye listesi henüz tam inmedi. İnternete bağlanınca kendiliğinden tamamlanır.";
     serit.hidden = false;
@@ -1702,7 +1708,7 @@ async function depoCiz() {
     } catch (e) {}
   }
   const ix = await yerelIndeksi();
-  const tamam = ix && ayarOku("indirilenTarih") === ix.tarih;
+  const tamam = ix && ayarOku("indirilenTarih") === veriDamgasi(ix);
   h += `<p class="durum-satir">${tamam ? "✅" : "⬜"} Türkiye yer listesi (81 il)${tamam ? " telefonda" : " henüz tam inmedi"}.</p>`;
   let medya = 0, rehberMetin = 0;
   if ("caches" in window) {

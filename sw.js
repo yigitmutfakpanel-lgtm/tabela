@@ -1,7 +1,7 @@
 // Kahverengi Tabela service worker: uygulama kabuğu cihazda kalır, internet yokken de açılır.
 // Yer listeleri burada değil, sayfanın kendi kaydında (localStorage) durur.
 // Yeni sürüm yayınlarken SURUM'u artır.
-const SURUM = "tabela-6";
+const SURUM = "tabela-7";
 // Aylık veri dosyaları ayrı kapta: sürüm değişince silinmez
 const VERI_KABI = "tabelaveri";
 // Yazılı rehberler (açılınca saklanır) ve kullanıcının indirdiği fotoğraf/ses: bunlar da sürüm değişince silinmez

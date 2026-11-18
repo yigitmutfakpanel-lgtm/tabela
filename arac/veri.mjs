@@ -176,7 +176,7 @@ console.log(`${okunan} adlı nesne okundu, ${yerlesen} tanesi bir ilçeye yerle�
 // --- 3) Yaz
 const eskiIndeks = oku(path.join(VERI, "iller.json")) || { iller: {} };
 const tarih = new Date().toISOString().slice(0, 10);
-const indeks = { surum: 2, tarih, kaynak: "© OpenStreetMap katkıcıları (ODbL), Geofabrik Türkiye dosyası", iller: {} };
+const indeks = { surum: 3, tarih, damga: new Date().toISOString(), kaynak: "© OpenStreetMap katkıcıları (ODbL), Geofabrik Türkiye dosyası", iller: {} };
 let toplamYer = 0, yazilan = 0;
 for (const [plaka, ad] of c.ILLER) {
   const il = iller.find((p) => p.plaka === plaka);
