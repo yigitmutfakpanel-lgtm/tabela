@@ -43,6 +43,8 @@ jobs:
           if git diff --cached --quiet; then echo "Değişiklik yok"; else git commit -m "Veri: $(date -u +%Y-%m-%d)" && git pull --rebase origin main && git push; fi
       - name: Siteyi hazırla
         run: |
+          # Liste çekimi uzun sürerken depoya yeni sürüm girmiş olabilir: en güncel kodu yayınla
+          if [ "${{ github.event_name }}" != "push" ]; then git pull --rebase origin main || true; fi
           mkdir _site
           cp -r index.html sw.js manifest.webmanifest icons fonts _site/
           if [ -d veri ]; then cp -r veri _site/; fi
