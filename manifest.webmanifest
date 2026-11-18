@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "Kahverengi Tabela",
+  "short_name": "Tabela",
+  "description": "Türkiye'deki kahverengi tabelalı turistik yerler, il ve ilçeye göre.",
+  "lang": "tr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3EEE8",
+  "theme_color": "#4A2A19",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
