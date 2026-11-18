@@ -1,6 +1,6 @@
 ani.json: yayınlandı → Q546010 (Ani, il 36), sesli
 bergama.json: yayınlandı → Q18986 (Pergamon, il 35), Q18986 (Pergamon Akropolü, il 35), sesli
-divrigi.json: konum listesinde eşleşen yer yok (Q581641); yayınlanmadı
+divrigi.json: yayınlandı → Q581641 (Divriği Ulu Camii, il 58), sesli
 efes.json: yayınlandı → Q47611 (Efes, il 35), sesli
 gobeklitepe.json: yayınlandı → Q214944 (Göbekli Tepe, il 63), sesli
 hierapolis-pamukkale.json: yayınlandı → Q7428276 (Hierapolis, il 20), Q105893254 (Pamukkale, il 20), sesli
