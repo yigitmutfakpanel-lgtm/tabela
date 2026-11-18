@@ -10,7 +10,8 @@ import { fileURLToPath } from "node:url";
 
 const KOK = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const VERI = path.join(KOK, "veri");
-const ARA = Number(process.env.VERI_ARA ?? 5000);
+const ARA = Number(process.env.VERI_ARA ?? 2000);
+const ESZAMANLI = Number(process.env.VERI_ESZAMANLI ?? 2); // Overpass bir adrese 2 eş zamanlı sorgu izni verir
 const SADECE = (process.env.VERI_ILLER || "").split(",").filter(Boolean).map(Number);
 
 // --- index.html'deki ortak kodu yükle
@@ -36,8 +37,8 @@ async function tekrarla(ad, fn) {
     try { return await fn(); }
     catch (e) {
       console.log(`  ${ad}: ${deneme}. deneme olmadı (${e && e.message})`);
-      if (deneme >= 4) throw e;
-      await bekle(ARA * 4 * deneme);
+      if (deneme >= 3) throw e;
+      await bekle(ARA * 5 * deneme);
     }
   }
 }
@@ -53,7 +54,7 @@ foreach.k->.d(
   ${c.yerFiltreleri("(area.da)")}
   );
   out center tags;
-);`, 330000);
+);`, 200000);
 }
 
 // Çıktıda her ilçe "etiketsiz ilişki" satırıyla başlar, ardından o ilçenin yerleri gelir.
@@ -86,35 +87,50 @@ let yeni = 0, korunan = 0, eksik = 0;
 const kimlik = await tekrarla("il kimlikleri", () => c.ilKimlikleriGetir());
 console.log(`${Object.keys(kimlik).length} il kimliği bulundu`);
 
-for (const [plaka, ad] of c.ILLER) {
+async function ilIsle(plaka, ad) {
   const eski = eskiIndeks.iller[plaka];
   const koru = (neden) => {
     if (eski) { indeks.iller[plaka] = eski; korunan++; console.log(`${ad}: ${neden}; önceki veri korundu`); }
     else { eksik++; console.log(`${ad}: ${neden}; veri yok, uygulama canlı sorguya döner`); }
   };
-  if (SADECE.length && !SADECE.includes(plaka)) { koru("bu çalıştırmada atlandı"); continue; }
+  if (SADECE.length && !SADECE.includes(plaka)) return koru("bu çalıştırmada atlandı");
   const id = kimlik[plaka];
-  if (!id) { koru("il sınırı bulunamadı"); continue; }
+  if (!id) return koru("il sınırı bulunamadı");
+  const t0 = Date.now();
   try {
-    await bekle(ARA);
     const ilceler = await tekrarla(`${ad} ilçeleri`, () => c.ilceleriGetir(id, ad));
-    if (!ilceler.length) { koru("ilçe bulunamadı"); continue; }
+    if (!ilceler.length) return koru("ilçe bulunamadı");
     await bekle(ARA);
     const veri = await tekrarla(`${ad} yerleri`, () => yerleriGetir(ilceler));
     const ilceYerleri = ilceyeGoreAyir(veri, ilceler);
     const toplam = Object.values(ilceYerleri).reduce((t, l) => t + l.length, 0);
     // Sunucu yarım cevap verdiyse (öncekinin yarısından az) eskisini koru
-    if (eski && eski.s && toplam < eski.s * 0.5) { koru(`yalnız ${toplam} yer geldi (önce ${eski.s})`); continue; }
+    if (eski && eski.s && toplam < eski.s * 0.5) return koru(`yalnız ${toplam} yer geldi (önce ${eski.s})`);
     yaz(plakaDosya(plaka), { tarih: indeks.tarih, ilceler: ilceYerleri });
     indeks.iller[plaka] = { id, ad, k: kutu(ilceYerleri), s: toplam, ilce: ilceler.map((d) => ({ id: d.id, n: d.n })) };
     yeni++;
-    console.log(`${ad}: ${ilceler.length} ilçe, ${toplam} yer`);
+    console.log(`${ad}: ${ilceler.length} ilçe, ${toplam} yer (${Math.round((Date.now() - t0) / 1000)} sn)`);
   } catch (e) {
     koru(`hata: ${e && e.message}`);
   }
 }
 
+// İş durdurulsa bile o ana kadar gelenler kaybolmasın: her ilden sonra dizin yazılır
+function dizinYaz() {
+  const tam = { ...indeks, iller: { ...eskiIndeks.iller, ...indeks.iller } };
+  yaz(path.join(VERI, "iller.json"), tam);
+}
+
+const sira = c.ILLER.slice();
+await Promise.all(Array.from({ length: ESZAMANLI }, async () => {
+  for (let is = sira.shift(); is; is = sira.shift()) {
+    await ilIsle(is[0], is[1]);
+    if (yeni) dizinYaz();
+    await bekle(ARA);
+  }
+}));
+
 if (!yeni && !korunan) { console.log("Hiç veri alınamadı; dosyalar değiştirilmedi."); process.exit(1); }
-yaz(path.join(VERI, "iller.json"), indeks);
+dizinYaz();
 console.log(`Bitti: ${yeni} il yenilendi, ${korunan} il önceki veriyle, ${eksik} il verisiz.`);
 if (!yeni) process.exit(1);

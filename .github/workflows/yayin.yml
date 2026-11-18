@@ -12,13 +12,14 @@ permissions:
   contents: write
   pages: write
   id-token: write
+# Site yayını (push) liste çekimini beklemez; ikisi ayrı sırada
 concurrency:
-  group: yayin
+  group: yayin-${{ github.event_name == 'push' && 'site' || 'veri' }}
   cancel-in-progress: false
 jobs:
   yayin:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 150
     environment:
       name: github-pages
       url: ${{ steps.yayin.outputs.page_url }}
@@ -30,14 +31,15 @@ jobs:
       - name: Yer listelerini yenile
         if: github.event_name != 'push'
         continue-on-error: true
+        timeout-minutes: 120
         run: node arac/veri.mjs
       - name: Yeni listeyi depoya kaydet
-        if: github.event_name != 'push'
+        if: always() && github.event_name != 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add veri
-          if git diff --cached --quiet; then echo "Değişiklik yok"; else git commit -m "Veri: $(date -u +%Y-%m-%d)" && git push; fi
+          if git diff --cached --quiet; then echo "Değişiklik yok"; else git commit -m "Veri: $(date -u +%Y-%m-%d)" && git pull --rebase origin main && git push; fi
       - name: Siteyi hazırla
         run: |
           mkdir _site
