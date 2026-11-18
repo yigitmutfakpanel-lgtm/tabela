@@ -35,7 +35,7 @@ jobs:
         timeout-minutes: 60
         run: |
           sudo apt-get update -q && sudo apt-get install -y -q osmium-tool
-          curl -fsSL --retry 3 -o "$RUNNER_TEMP/turkiye.osm.pbf" https://download.geofabrik.de/europe/turkey-latest.osm.pbf
+          curl -fsSL --retry 6 --retry-all-errors --retry-delay 30 -o "$RUNNER_TEMP/turkiye.osm.pbf" https://download.geofabrik.de/europe/turkey-latest.osm.pbf
           ls -lh "$RUNNER_TEMP/turkiye.osm.pbf"
           bash arac/veri.sh "$RUNNER_TEMP/turkiye.osm.pbf"
       # Rehber metinleri: icerik/kaynak/*.json denetlenir ve yerlere kesin kimlikle bağlanır

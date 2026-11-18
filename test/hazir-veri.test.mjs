@@ -1,0 +1,58 @@
+// Hazır veri (veri/) varken: harita sunucusu hiç yokken bile uygulama çalışmalı.
+import os from 'node:os';
+import path from 'node:path';
+import { playwright, siteHazirla } from './ortak.mjs';
+const { chromium } = playwright();
+import http from 'node:http';
+import fs from 'node:fs';
+const KOK = process.argv[2] || siteHazirla(path.join(os.tmpdir(), 'tabela-test-' + path.basename(import.meta.url, '.test.mjs')), { rehber: false });
+const TIP = { html: 'text/html; charset=utf-8', js: 'text/javascript', json: 'application/json', webmanifest: 'application/manifest+json', png: 'image/png', woff2: 'font/woff2' };
+const srv = http.createServer((q, r) => {
+  let yol = decodeURIComponent(new URL(q.url, 'http://x').pathname).replace(/^\/tabela\//, '');
+  if (yol === '') yol = 'index.html';
+  const dosya = KOK + '/' + yol;
+  if (!fs.existsSync(dosya) || fs.statSync(dosya).isDirectory()) { r.writeHead(404); r.end(); return; }
+  r.writeHead(200, { 'Content-Type': TIP[yol.split('.').pop()] || 'application/octet-stream' });
+  r.end(fs.readFileSync(dosya));
+}).listen(8766);
+let hata = 0; const ok = (c, m) => { console.log((c ? '✓ ' : '✗ ') + m); if (!c) hata++; };
+const b = await chromium.launch();
+const ctx = await b.newContext({ viewport: { width: 375, height: 780 }, geolocation: { latitude: 38.0, longitude: 27.0 }, permissions: ['geolocation'] });
+let disIstek = 0;
+await ctx.route(/overpass-api\.de|kumi\.systems|mail\.ru/, (r) => { disIstek++; r.abort(); });
+const p = await ctx.newPage();
+const errs = []; p.on('pageerror', (e) => errs.push(e.message));
+await p.goto('http://localhost:8766/tabela/')
+await p.selectOption('#il', '35');
+await p.waitForSelector('.kart');
+const ilce = await p.$$eval('#ilce option', (o) => o.map((x) => x.textContent));
+ok(ilce.join() === 'Tüm il,Çay,Merkez', 'ilçeler hazır veriden: ' + ilce.join());
+const kart = await p.$$eval('.kart .ad', (o) => o.map((x) => x.textContent));
+ok(kart.length === 5 && !kart.includes('Anma'), 'tüm il: ' + kart.join(' | '));
+ok((await p.textContent('footer')).includes('Liste tarihi'), 'liste tarihi altta');
+await p.selectOption('#ilce', '351');
+await p.waitForFunction(() => document.querySelectorAll('.kart').length === 3);
+ok(true, 'ilçe: 3 yer');
+await p.click('#yakin');
+await p.waitForSelector('.uzak');
+const yakin = await p.$$eval('.kart', (o) => o.map((x) => x.querySelector('.ad').textContent + ' ' + x.querySelector('.uzak').textContent));
+ok(yakin.length > 0 && yakin.every((x, i, a) => i === 0 || parseFloat(a[i-1].split(' ').slice(-2)[0].replace(',', '.')) <= parseFloat(x.split(' ').slice(-2)[0].replace(',', '.'))), 'yakınımdakiler hazır veriden: ' + yakin.slice(0, 3).join(' | ') + ` (${yakin.length})`);
+await p.click('#yakin');
+await p.selectOption('#il', '6');
+await p.waitForSelector('#tekrar');
+ok(true, 'verisi olmayan il (Ankara) canlı sorguya döndü, sunucu yokken hata gösterdi');
+ok(disIstek > 0, 'Ankara için dış sorgu denendi');
+const once = disIstek;
+await p.selectOption('#il', '1');
+await p.waitForSelector('.kart');
+ok(disIstek === once, 'hazır verisi olan il için dış istek yok');
+const t0 = Date.now(); await p.evaluate(() => navigator.serviceWorker.ready); console.log('  sw hazır', Date.now() - t0, 'ms');
+await p.reload(); await p.waitForSelector('.kart');
+await ctx.setOffline(true);
+await p.reload(); await p.waitForSelector('.kart');
+await p.selectOption('#il', '35'); await p.waitForFunction(() => document.querySelector('#ozet').textContent.includes('5 yer'));
+ok(true, 'internetsiz: daha önce açılan il hazır veriden');
+ok(errs.length === 0, 'sayfa hatası yok ' + errs.join(' / '));
+await p.screenshot({ path: 's6.png' });
+await b.close(); srv.close();
+console.log(hata ? hata + ' HATA' : 'HEPSİ GEÇTİ');

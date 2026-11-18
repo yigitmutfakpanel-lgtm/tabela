@@ -48,12 +48,13 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // veri/: cihazdaki kopya hemen verilir, arkada yenisi indirilir (ayda bir değişir)
+  // veri/ ve icerik/: cihazdaki kopya verilir; ay değişince uygulama yeniler
   if (url.pathname.includes("/veri/") || url.pathname.includes("/icerik/")) {
     e.respondWith((async () => {
       const kap = await caches.open(url.pathname.includes("/icerik/") ? REHBER_KABI : VERI_KABI);
-      // Uygulama "reload" isterse (Türkiye listesini indirirken, aylık yenilemede): önce ağ
-      if (istek.cache === "reload") {
+      // Uygulama tazeleme isterse (Türkiye listesini indirirken, aylık yenilemede): önce ağ.
+      // Tarayıcının sayfa yenilemede kendiliğinden koyduğu önbellek kipine bakılmaz; yalnız uygulamanın işaretine.
+      if (istek.headers.get("X-Tabela-Tazele") === "1") {
         try {
           const r = await fetch(istek);
           if (r.ok) await kap.put(istek, r.clone());
@@ -62,10 +63,13 @@ self.addEventListener("fetch", (e) => {
           return (await kap.match(istek, { ignoreSearch: true })) || Response.error();
         }
       }
+      // Cihazda varsa doğrudan oradan (gereksiz indirme yok). Yenileme, uygulama liste tarihi değişince
+      // "reload" isteğiyle yapar; dizin dosyaları (iller.json, dizin.json) zaten hep öyle istenir.
       const kayit = await kap.match(istek, { ignoreSearch: true });
-      const ag = fetch(istek).then((r) => { if (r.ok) kap.put(istek, r.clone()); return r; });
-      if (kayit) { e.waitUntil(ag.catch(() => {})); return kayit; }
-      return ag;
+      if (kayit) return kayit;
+      const r = await fetch(istek);
+      if (r.ok) await kap.put(istek, r.clone());
+      return r;
     })());
     return;
   }

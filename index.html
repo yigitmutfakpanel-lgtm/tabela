@@ -804,12 +804,14 @@ function yakinSirala(kayitlar, enlem, boylam) {
 // harita sunucusuna gerek kalmaz. Yoksa ya da açılamazsa canlı sorguya dönülür.
 // ---------------------------------------------------------------------------
 const VERI_YOLU = "veri/";
+// Uygulamanın bilerek yaptığı tazeleme istekleri bu işareti taşır; sw.js yalnız bunlarda ağı önceler
+const TAZELE = { "X-Tabela-Tazele": "1" };
 let yerelIndeks = null;
 async function yerelIndeksi() {
   if (yerelIndeks) return yerelIndeks;
   try {
     let r = null;
-    if (navigator.onLine !== false) { try { r = await fetch(VERI_YOLU + "iller.json", { cache: "reload" }); } catch (e) { r = null; } }
+    if (navigator.onLine !== false) { try { r = await fetch(VERI_YOLU + "iller.json", { cache: "reload", headers: TAZELE }); } catch (e) { r = null; } }
     if (!r || !r.ok) r = await fetch(VERI_YOLU + "iller.json");
     if (!r.ok) return null;
     const j = await r.json();
@@ -839,6 +841,18 @@ const tarihGoster = (iso) => iso.split("-").reverse().join(".");
 const ilYolu = (p) => `${VERI_YOLU}il/${String(p).padStart(2, "0")}.json`;
 const VERI_KABI = "tabelaveri"; // sw.js ile aynı ad
 
+// Önbellekteki dosyaları (desene uyanları) ağdan tazeler; yalnız liste/rehber tarihi değişince çağrılır
+async function onbellekTazele(kapAdi, desen) {
+  if (!("caches" in window) || navigator.onLine === false) return;
+  try {
+    const kap = await caches.open(kapAdi);
+    for (const istek of await kap.keys()) {
+      if (!desen.test(istek.url)) continue;
+      try { await fetch(istek.url, { cache: "reload", headers: TAZELE }); } catch (e) {}
+    }
+  } catch (e) {}
+}
+
 // Bütün Türkiye listesini telefona indirir (arka planda, bir kez; ayda bir yenilenir).
 // Bittiğinde uygulama harita sunucusuna hiç ihtiyaç duymaz.
 let indiriliyor = false;
@@ -852,11 +866,18 @@ async function turkiyeyiIndir() {
     const kap = await caches.open(VERI_KABI);
     const tumu = Object.keys(ix.iller);
     const tazeMi = ayarOku("indirilenTarih") === ix.tarih;
+    if (!tazeMi) onbellekTazele(VERI_KABI, /\/veri\/gorsel\//); // yeni ayın fotoğraf listeleri
+    // Bu ay inen iller tek tek işaretlenir: yarıda kalırsa yalnız eksikler yeniden iner
+    const bitenAnahtar = "inenIller:" + ix.tarih;
+    let biten0 = [];
+    try { biten0 = JSON.parse(ayarOku(bitenAnahtar) || "[]"); } catch (e) { biten0 = []; }
+    const inen = new Set(biten0.map(String));
     const eksik = [];
     for (const p of tumu) {
-      if (!tazeMi || !(await kap.match(new URL(ilYolu(p), location.href).href, { ignoreSearch: true }))) eksik.push(p);
+      const kayitli = await kap.match(new URL(ilYolu(p), location.href).href, { ignoreSearch: true });
+      if (!kayitli || (!tazeMi && !inen.has(String(p)))) eksik.push(p);
     }
-    if (!eksik.length) { ayarYaz("indirilenTarih", ix.tarih); return; }
+    if (!eksik.length) { ayarYaz("indirilenTarih", ix.tarih); ayarYaz(bitenAnahtar, null); return; }
     const toplamB = eksik.reduce((t, p) => t + (ix.iller[p].b || 40000), 0);
     let biten = 0, hata = 0;
     indirmeGoster(0, eksik.length, toplamB);
@@ -864,16 +885,18 @@ async function turkiyeyiIndir() {
     await Promise.all([1, 2, 3].map(async () => {
       for (let p = sira.shift(); p; p = sira.shift()) {
         try {
-          const r = await fetch(ilYolu(p), { cache: "reload" }); // sw.js bunu kaba yazar
+          const r = await fetch(ilYolu(p), { cache: "reload", headers: TAZELE }); // sw.js bunu kaba yazar
           if (!r.ok) throw new Error("HTTP " + r.status);
           await r.arrayBuffer();
           ilDosyalari.delete(+p);
+          inen.add(String(p));
+          ayarYaz(bitenAnahtar, JSON.stringify([...inen]));
         } catch (e) { hata++; }
         biten++;
         indirmeGoster(biten, eksik.length, toplamB);
       }
     }));
-    if (!hata) ayarYaz("indirilenTarih", ix.tarih);
+    if (!hata) { ayarYaz("indirilenTarih", ix.tarih); ayarYaz(bitenAnahtar, null); }
   } catch (e) {
   } finally {
     indiriliyor = false;
@@ -1265,12 +1288,16 @@ async function rehberDiziniYukle() {
   if (rehberDizin) return rehberDizin;
   try {
     let r = null;
-    if (navigator.onLine !== false) { try { r = await fetch("icerik/dizin.json", { cache: "reload" }); } catch (e) { r = null; } }
+    if (navigator.onLine !== false) { try { r = await fetch("icerik/dizin.json", { cache: "reload", headers: TAZELE }); } catch (e) { r = null; } }
     if (!r || !r.ok) r = await fetch("icerik/dizin.json");
     if (!r.ok) return null;
     const j = await r.json();
     if (!j || !j.yerler) return null;
     rehberDizin = j;
+    if (ayarOku("rehberTarih") !== j.tarih) {
+      // Rehber metinleri güncellenmiş: cihazdaki il rehberlerini tazele
+      onbellekTazele(REHBER_KABI, /\/icerik\/il\//).then(() => { ilRehberleri.clear(); ayarYaz("rehberTarih", j.tarih); });
+    }
     if (el.icerik.querySelector(".liste")) listeyiCiz(); // "Rehber" rozetleri görünsün
     return j;
   } catch (e) { return null; }
@@ -1345,7 +1372,7 @@ async function detayAc(k, gecmiseEkle = true) {
   $("detayGovde").innerHTML =
     `<div class="kapak" id="kapak"><div class="yer-tutucu" aria-hidden="true"><span>${simge}</span></div></div>` +
     `<div class="detay-bas"><h2 id="detayAd" tabindex="-1">${kacir(k.n)}</h2><div class="yer-meta">${kacir([yerAdlari, katAdi].filter(Boolean).join(" · "))}${k.m != null ? " · " + kmYaz(k.m) + " uzakta" : ""}</div></div>` +
-    `<div id="detayRehber"><div class="uyari" role="status">Rehber yükleniyor…</div></div>`;
+    `<div id="detayRehber"><div class="uyari" role="status" id="rehberYukleniyor">Rehber yükleniyor…</div></div>`;
   $("detay").hidden = false;
   $("detay").scrollTop = 0;
   document.body.classList.add("detayda");
@@ -1449,7 +1476,7 @@ async function yerRehberiniIndir(k, reh, fotolar, dugme) {
   try {
     const rk = await caches.open(REHBER_KABI), mk = await caches.open(MEDYA_KABI);
     const metinUrl = mutlak(`icerik/il/${iki(reh.p)}.json`);
-    const r = await fetch(metinUrl, { cache: "reload" });
+    const r = await fetch(metinUrl, { cache: "reload", headers: TAZELE });
     if (r.ok) await rk.put(metinUrl, r); else hata++;
     for (const f of fotolar) for (const u of [...new Set([f.u, f.b].filter(Boolean))]) {
       if (!(await medyaKaydet(mk, u))) hata++;
@@ -1708,12 +1735,12 @@ async function ilRehberiniIndir(plaka, medyaDa, dugme) {
   try {
     const rk = await caches.open(REHBER_KABI);
     const metinUrl = mutlak(`icerik/il/${iki(plaka)}.json`);
-    const r = await fetch(metinUrl, { cache: "reload" });
+    const r = await fetch(metinUrl, { cache: "reload", headers: TAZELE });
     if (!r.ok) throw new Error("HTTP " + r.status);
     const il = await r.clone().json();
     await rk.put(metinUrl, r);
     ilRehberleri.delete(plaka);
-    await fetch(`veri/gorsel/${iki(plaka)}.json`, { cache: "reload" }).catch(() => hata++); // sw.js veri kabına yazar
+    await fetch(`veri/gorsel/${iki(plaka)}.json`, { cache: "reload", headers: TAZELE }).catch(() => hata++); // sw.js veri kabına yazar
     if (medyaDa) {
       const mk = await caches.open(MEDYA_KABI);
       const gorselListesi = await fetch(`veri/gorsel/${iki(plaka)}.json`).then((x) => (x.ok ? x.json() : {})).catch(() => ({}));

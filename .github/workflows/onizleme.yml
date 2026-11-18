@@ -23,7 +23,7 @@ jobs:
       - name: Yer listeleri (Geofabrik)
         run: |
           sudo apt-get update -q && sudo apt-get install -y -q osmium-tool
-          curl -fsSL --retry 3 -o "$RUNNER_TEMP/turkiye.osm.pbf" https://download.geofabrik.de/europe/turkey-latest.osm.pbf
+          curl -fsSL --retry 6 --retry-all-errors --retry-delay 30 -o "$RUNNER_TEMP/turkiye.osm.pbf" https://download.geofabrik.de/europe/turkey-latest.osm.pbf
           bash arac/veri.sh "$RUNNER_TEMP/turkiye.osm.pbf"
       # Önce rehber dizini (fotoğraf aracı, rehberi olan yerlere ek fotoğraf ekler), sonra fotoğraflar
       - name: Rehber içerikleri
