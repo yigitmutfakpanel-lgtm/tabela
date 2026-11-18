@@ -67,5 +67,7 @@
  ],
  "dogrulama": "2026-11-18",
  "surum": 1,
- "not": "Metin, kaynaklardaki bilgiler karşılaştırılarak özgün olarak yazıldı; kaynak metinlerden doğrudan kopyalanmadı."
+ "not": "Metin, kaynaklardaki bilgiler karşılaştırılarak özgün olarak yazıldı; kaynak metinlerden doğrudan kopyalanmadı.",
+ "sesSure": 158,
+ "sesLisans": "Ses: Piper TTS, dfki Türkçe sesi (CC BY-NC-SA 4.0)"
 }

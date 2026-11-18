@@ -18,8 +18,9 @@ const oku = (d) => { try { return JSON.parse(fs.readFileSync(d, "utf8")); } catc
 // Yalnız özgür lisanslar (Commons zaten bunları barındırır; yine de denetlenir)
 export function lisansUygunMu(l) {
   if (!l) return false;
-  if (/\bNC\b|\bND\b|non-?commercial|no derivatives|fair use|copyrighted/i.test(l)) return false;
-  return /^(CC0|CC[ -]BY|Public domain|PD|GFDL|Attribution|FAL|Free Art|OGL|Copyrighted free use)/i.test(l.trim());
+  if (/\bNC\b|\bND\b|non-?commercial|no derivatives|fair use/i.test(l)) return false;
+  // "No restrictions": Flickr Commons'tan, bilinen telif kısıtlaması olmayan; "Copyrighted free use": serbest kullanım izni
+  return /^(CC0|CC[ -]BY|Public domain|PD|GFDL|Attribution|FAL|Free Art|OGL|Copyrighted free use|No restrictions)/i.test(l.trim());
 }
 const htmlSil = (s) => String(s || "").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/\s+/g, " ").trim();
 
@@ -80,7 +81,8 @@ async function dosyaBilgileri(dosyalar) {
           lu: htmlSil(m.LicenseUrl?.value) || undefined,
           mime: ii.mime
         };
-        if (genislik === 960) kayit.u = ii.thumburl || ii.url; else kayit.b = ii.thumburl || ii.url;
+        const adres = String(ii.thumburl || ii.url || "").replace(/\?utm_[^#]*$/, ""); // takip eklerini at
+        if (genislik === 960) kayit.u = adres; else kayit.b = adres;
         sonuc.set(anahtar, kayit);
       }
       await bekle(500);

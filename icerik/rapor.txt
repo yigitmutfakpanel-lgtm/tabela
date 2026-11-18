@@ -1,8 +1,8 @@
-ani.json: yayınlandı → Q546010 (Ani, il 36)
-bergama.json: yayınlandı → Q18986 (Pergamon, il 35), Q18986 (Pergamon Akropolü, il 35)
+ani.json: yayınlandı → Q546010 (Ani, il 36), sesli
+bergama.json: yayınlandı → Q18986 (Pergamon, il 35), Q18986 (Pergamon Akropolü, il 35), sesli
 divrigi.json: konum listesinde eşleşen yer yok (Q581641); yayınlanmadı
-efes.json: yayınlandı → Q47611 (Efes, il 35)
-gobeklitepe.json: yayınlandı → Q214944 (Göbekli Tepe, il 63)
-hierapolis-pamukkale.json: yayınlandı → Q7428276 (Hierapolis, il 20), Q105893254 (Pamukkale, il 20)
-nemrut.json: yayınlandı → Q207917 (Nemrut Dağı, il 2)
-sumela.json: yayınlandı → Q1419157 (Sümela Manastırı, il 61)
+efes.json: yayınlandı → Q47611 (Efes, il 35), sesli
+gobeklitepe.json: yayınlandı → Q214944 (Göbekli Tepe, il 63), sesli
+hierapolis-pamukkale.json: yayınlandı → Q7428276 (Hierapolis, il 20), Q105893254 (Pamukkale, il 20), sesli
+nemrut.json: yayınlandı → Q207917 (Nemrut Dağı, il 2), sesli
+sumela.json: yayınlandı → Q1419157 (Sümela Manastırı, il 61), sesli

@@ -205,6 +205,83 @@
   .serit .cubuk span { display: block; height: 100%; width: 0; background: var(--tabela); transition: width .3s; }
   .serit.cevrim { background: #FFF6E5; border-color: var(--vurgu); }
   .not { margin: 4px 0 0; font-size: 14px; color: #8A5A12; }
+  /* Kart artık düğme: dokununca detay açılır */
+  .kart button.git { width: 100%; border: 0; background: transparent; text-align: left; cursor: pointer; font: inherit; }
+  .kart .rozet-rehber { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 5px; background: #fff; color: var(--tabela-koyu); font-size: 11px; letter-spacing: 0; text-transform: none; vertical-align: 1px; }
+
+  /* Yer detay ekranı */
+  body.detayda { overflow: hidden; }
+  .detay { position: fixed; inset: 0; z-index: 20; background: var(--zemin); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .detay[hidden] { display: none; }
+  .detay-ust { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 8px; padding: calc(8px + env(safe-area-inset-top)) 12px 8px; background: var(--tabela-koyu); color: #fff; }
+  .detay-ust button { min-width: 48px; height: 48px; border: 2px solid rgba(255,255,255,.7); border-radius: 10px; background: transparent; color: #fff; font-size: 22px; font-weight: 800; cursor: pointer; }
+  .detay-ust .baslik-kucuk { flex: 1; min-width: 0; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .detay-govde { max-width: 760px; margin: 0 auto; padding: 0 0 calc(110px + env(safe-area-inset-bottom)); }
+  .kapak { position: relative; background: var(--tabela); aspect-ratio: 4 / 3; max-height: 62vh; width: 100%; overflow: hidden; }
+  .kapak img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .kapak button { all: unset; display: block; width: 100%; height: 100%; cursor: zoom-in; }
+  .kapak .yer-tutucu { width: 100%; height: 100%; display: grid; place-items: center; color: #fff; font-size: 84px; box-shadow: inset 0 0 0 10px var(--tabela), inset 0 0 0 14px #fff; }
+  .kapak .yer-tutucu span { filter: brightness(0) invert(1); }
+  .kapak .sayi { position: absolute; right: 10px; bottom: 10px; background: rgba(0,0,0,.6); color: #fff; padding: 4px 9px; border-radius: 6px; font-size: 14px; pointer-events: none; }
+  .foto-kunye { margin: 6px 16px 0; font-size: 12px; color: var(--soluk); overflow-wrap: anywhere; }
+  .foto-kunye a { color: inherit; }
+  .detay-bas { padding: 14px 16px 4px; }
+  .detay-bas h2 { margin: 0; font-size: 26px; line-height: 1.15; font-weight: 800; }
+  .detay-bas .yer-meta { margin-top: 6px; color: var(--soluk); font-size: 15px; }
+  .bolum { margin: 14px 16px 0; padding: 16px; background: #fff; border-radius: 12px; border: 1px solid var(--cizgi); }
+  .bolum h3 { margin: 0 0 8px; font-size: 18px; font-weight: 800; color: var(--tabela-koyu); }
+  .bolum h4 { margin: 14px 0 4px; font-size: 16px; font-weight: 800; }
+  .bolum p { margin: 0 0 8px; font-weight: 600; line-height: 1.5; }
+  .bolum p:last-child { margin-bottom: 0; }
+  .bolum.kisa p { font-size: 18px; }
+  .efsane { display: inline-block; margin-right: 6px; padding: 1px 6px; border-radius: 5px; background: #FFF0D6; color: #8A5A12; font-size: 12px; font-weight: 800; }
+  .ilginc-liste { margin: 0; padding-left: 20px; }
+  .ilginc-liste li { margin-bottom: 8px; line-height: 1.45; }
+  .uyari { margin: 14px 16px 0; padding: 14px 16px; border-radius: 12px; background: #fff; border: 2px dashed var(--cizgi); color: var(--soluk); }
+  .kaynak-liste { margin: 0; padding-left: 20px; font-size: 15px; }
+  .kaynak-liste li { margin-bottom: 6px; overflow-wrap: anywhere; }
+  .kaynak-liste a { color: var(--tabela); font-weight: 800; }
+  .kucuk-not { font-size: 13px; color: var(--soluk); margin-top: 8px !important; }
+  .galeri { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 0 16px 4px; }
+  .galeri button { flex: none; width: 44%; max-width: 220px; aspect-ratio: 1; padding: 0; border: 0; border-radius: 10px; overflow: hidden; background: var(--cizgi); cursor: zoom-in; scroll-snap-align: start; }
+  .galeri img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .yok-gorsel { display: grid; place-items: center; height: 100%; font-size: 13px; color: var(--soluk); padding: 8px; text-align: center; }
+
+  /* Ses oynatıcı */
+  .oynatici .ana-dugme { width: 100%; min-height: 56px; border: 0; border-radius: 12px; background: var(--tabela); color: #fff; font-size: 18px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .oynatici .ana-dugme[disabled] { opacity: .5; }
+  .oynatici .satir2 { display: flex; gap: 8px; margin-top: 10px; }
+  .oynatici .satir2 button, .oynatici select { flex: 1; min-height: 48px; border: 2px solid var(--tabela); border-radius: 10px; background: #fff; color: var(--tabela); font-weight: 800; font-size: 15px; cursor: pointer; }
+  .oynatici input[type=range] { width: 100%; margin: 12px 0 2px; accent-color: var(--tabela); height: 28px; }
+  .oynatici .zaman { display: flex; justify-content: space-between; font-size: 13px; color: var(--soluk); }
+  .oynatici .ses-not { font-size: 13px; color: var(--soluk); margin-top: 8px; }
+
+  /* Alt sabit yol tarifi çubuğu */
+  .yol-cubuk { position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: rgba(243,238,232,.96); border-top: 1px solid var(--cizgi); }
+  .yol-cubuk[hidden] { display: none; }
+  .yol-cubuk a { flex: 1; min-height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: 800; font-size: 17px; }
+  .yol-cubuk .birincil { background: var(--tabela); color: #fff; flex: 2; }
+  .yol-cubuk .ikincil { border: 2px solid var(--tabela); color: var(--tabela); background: #fff; }
+  .indir-dugme { width: 100%; min-height: 52px; margin-top: 10px; border: 2px solid var(--tabela); border-radius: 10px; background: #fff; color: var(--tabela); font-weight: 800; font-size: 16px; cursor: pointer; }
+  .durum-satir { font-size: 14px; margin: 4px 0; }
+
+  /* Büyük fotoğraf */
+  .buyuk { position: fixed; inset: 0; z-index: 30; background: rgba(0,0,0,.94); display: flex; flex-direction: column; }
+  .buyuk[hidden] { display: none; }
+  .buyuk img { flex: 1; min-height: 0; width: 100%; object-fit: contain; }
+  .buyuk .ust { display: flex; justify-content: space-between; align-items: center; padding: calc(8px + env(safe-area-inset-top)) 12px 8px; color: #fff; }
+  .buyuk button { min-width: 48px; height: 48px; border: 2px solid #fff; border-radius: 10px; background: transparent; color: #fff; font-size: 20px; font-weight: 800; cursor: pointer; }
+  .buyuk .kunye { color: #ddd; font-size: 13px; padding: 8px 16px calc(12px + env(safe-area-inset-bottom)); overflow-wrap: anywhere; }
+  .buyuk .kunye a { color: #fff; }
+
+  /* Depolama paneli */
+  .panel { position: fixed; inset: 0; z-index: 25; background: rgba(0,0,0,.45); display: flex; align-items: flex-end; }
+  .panel[hidden] { display: none; }
+  .panel .kutu { width: 100%; max-height: 88vh; overflow-y: auto; background: var(--zemin); border-radius: 16px 16px 0 0; padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); }
+  .panel h2 { margin: 0 0 8px; font-size: 20px; font-weight: 800; }
+  .panel .kapat-satir { display: flex; justify-content: space-between; align-items: center; }
+  .panel .kapat-satir button { min-width: 48px; height: 48px; border: 0; background: transparent; font-size: 26px; cursor: pointer; color: var(--yazi); }
+  .altbilgi-dugme { min-height: 48px; padding: 0 16px; margin-top: 10px; border: 2px solid var(--tabela); border-radius: 10px; background: #fff; color: var(--tabela); font-weight: 800; font-size: 15px; cursor: pointer; }
   footer { text-align: center; color: var(--soluk); font-size: 13px; padding: 4px 16px 28px; }
   footer a { color: inherit; }
   .gizli { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -252,7 +329,29 @@
   <div id="ozet" class="ozet" aria-live="polite"></div>
   <div id="icerik"></div>
 </main>
-<footer>Veriler © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> katkıcıları.<span id="veriTarih"></span><span id="cihazDurum"></span> Yol tarifi Google Haritalar'da açılır.</footer>
+<footer>Veriler © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> katkıcıları.<span id="veriTarih"></span><span id="cihazDurum"></span> Bir yere dokununca rehberi açılır.<br><button type="button" class="altbilgi-dugme" id="depoAc">📦 İndirilenler ve depolama</button></footer>
+
+<section id="detay" class="detay" hidden role="dialog" aria-modal="true" aria-labelledby="detayAd">
+  <div class="detay-ust">
+    <button type="button" id="detayGeri" aria-label="Listeye dön">←</button>
+    <span class="baslik-kucuk" id="detayUstAd" aria-hidden="true"></span>
+  </div>
+  <div class="detay-govde" id="detayGovde"></div>
+</section>
+<div class="yol-cubuk" id="yolCubuk" hidden></div>
+
+<div class="buyuk" id="buyukFoto" hidden role="dialog" aria-modal="true" aria-label="Büyük fotoğraf">
+  <div class="ust"><span id="buyukSira"></span><span><button type="button" id="buyukOnceki" aria-label="Önceki fotoğraf">‹</button> <button type="button" id="buyukSonraki" aria-label="Sonraki fotoğraf">›</button> <button type="button" id="buyukKapat" aria-label="Kapat">×</button></span></div>
+  <img id="buyukResim" alt="">
+  <div class="kunye" id="buyukKunye"></div>
+</div>
+
+<div class="panel" id="depoPanel" hidden role="dialog" aria-modal="true" aria-labelledby="depoBaslik">
+  <div class="kutu">
+    <div class="kapat-satir"><h2 id="depoBaslik">İndirilenler ve depolama</h2><button type="button" id="depoKapat" aria-label="Kapat">×</button></div>
+    <div id="depoIcerik"></div>
+  </div>
+</div>
 
 <script>
 "use strict";
@@ -447,7 +546,8 @@ function yerFiltreleri(kapsam) {
     `nwr["natural"~"^(cave_entrance|waterfall|gorge|hot_spring)$"]["name"]${kapsam};`,
     `nwr["boundary"~"^(national_park|protected_area)$"]["name"]${kapsam};`,
     `nwr["leisure"="nature_reserve"]["name"]${kapsam};`,
-    `nwr["amenity"="place_of_worship"]["historic"]["name"]${kapsam};`
+    `nwr["amenity"="place_of_worship"]["historic"]["name"]${kapsam};`,
+    `nwr["amenity"="place_of_worship"]["heritage"]["name"]${kapsam};`
   ].join("\n  ");
 }
 
@@ -511,7 +611,8 @@ function kategori(t, ad) {
     if (g === "milli" || g === "tabiat" || g === "kanyon" || g === "magara" || g === "selale") return g;
     return "koruma";
   }
-  if (t.amenity === "place_of_worship" && h) {
+  // Tarihî ibadet yerleri: historic etiketi ya da koruma (heritage, ör. UNESCO = 1) etiketi olanlar
+  if (t.amenity === "place_of_worship" && (h || t.heritage)) {
     const din = t.religion;
     if (din === "muslim") return /türbe/.test(a) ? "turbe" : "cami";
     if (din === "christian") return "kilise";
@@ -693,9 +794,9 @@ out center tags;`);
 }
 function yakinSirala(kayitlar, enlem, boylam) {
   return kayitlar
-    .map((k) => Object.assign({}, k, { d: mesafe(enlem, boylam, k.a, k.o) }))
-    .filter((k) => k.d <= YAKIN_YARICAP)
-    .sort((x, y) => x.d - y.d || trSirala(x.n, y.n));
+    .map((k) => Object.assign({}, k, { m: mesafe(enlem, boylam, k.a, k.o) }))  // m: uzaklık (metre); d Wikidata kimliğidir
+    .filter((k) => k.m <= YAKIN_YARICAP)
+    .sort((x, y) => x.m - y.m || trSirala(x.n, y.n));
 }
 
 // ---------------------------------------------------------------------------
@@ -724,7 +825,11 @@ function yerelIl(plaka) {
   if (!ilDosyalari.has(plaka)) {
     const s = fetch(ilYolu(plaka))
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then((j) => { if (!j || !j.ilceler) throw new Error("Geçersiz dosya"); return j; });
+      .then((j) => {
+        if (!j || !j.ilceler) throw new Error("Geçersiz dosya");
+        for (const [ic, l] of Object.entries(j.ilceler)) for (const k of l) { k._p = +plaka; k._ic = +ic; }
+        return j;
+      });
     s.catch(() => ilDosyalari.delete(plaka));
     ilDosyalari.set(plaka, s);
   }
@@ -909,15 +1014,16 @@ function suzulmus() {
 
 function kartHtml(k) {
   const [katAdi, simge] = KAT[k.c];
-  const uzak = k.d != null ? `<span class="uzak">${kmYaz(k.d)}</span>` : "";
+  const uzak = k.m != null ? `<span class="uzak">${kmYaz(k.m)}</span>` : "";
   const wiki = k.w ? `<a class="wiki" href="${kacir(k.w)}" target="_blank" rel="noopener">📖 Vikipedi</a>` : "";
   const geo = ANDROID ? `<a class="wiki" href="geo:${k.a},${k.o}?q=${k.a},${k.o}(${encodeURIComponent(k.n)})">🗺️ Başka harita</a>` : "";
-  return `<li class="kart"><a class="git" href="${haritaAdresi(k)}" target="_blank" rel="noopener" aria-label="${kacir(k.n)}, ${kacir(katAdi)}: Google Haritalar'da yol tarifi">` +
+  const rehberli = rehberAnahtari(k) ? `<span class="rozet-rehber">🎧 Rehber</span>` : "";
+  return `<li class="kart"><button type="button" class="git" data-x="${k._x}" aria-label="${kacir(k.n)}, ${kacir(katAdi)}${rehberli ? ", rehberi var" : ""}: ayrıntıları aç">` +
     `<span class="ikon" aria-hidden="true"><span>${simge}</span></span>` +
-    `<span class="metin"><span class="ad">${kacir(k.n)}</span><span class="tur">${kacir(katAdi)}</span></span>` +
+    `<span class="metin"><span class="ad">${kacir(k.n)}</span><span class="tur">${kacir(katAdi)}${rehberli}</span></span>` +
     uzak +
     `<svg class="ok" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>` +
-    `</a>${wiki || geo ? `<div class="ekler">${wiki}${geo}</div>` : ""}</li>`;
+    `</button>${wiki || geo ? `<div class="ekler">${wiki}${geo}</div>` : ""}</li>`;
 }
 
 function listeyiCiz() {
@@ -937,6 +1043,8 @@ function listeyiCiz() {
     el.icerik.innerHTML = `<div class="durum"><div class="buyuk-ikon" aria-hidden="true">🔎</div><h2>Eşleşen yer yok</h2><p>Aramayı ya da kategori filtresini değiştir.</p></div>`;
     return;
   }
+  liste.forEach((k, x) => { k._x = x; });
+  durum.sonListe = liste;
   const gorunen = liste.slice(0, durum.gosterilen);
   let html = `<ul class="liste">${gorunen.map(kartHtml).join("")}</ul>`;
   if (liste.length > gorunen.length) {
@@ -1028,6 +1136,7 @@ async function ilceSecildi(mevcutNo) {
     const hazir = await yerelBolge(plaka, relId, tumIl);
     const s = hazir ? { v: hazir, eski: false } : await bolgeYerleri(relId);
     if (no !== durum.istek) return;
+    for (const k of s.v) { if (k._p == null) k._p = plaka; if (!tumIl && k._ic == null) k._ic = relId; }
     yerleriGoster(s.v, bolgeAdi, s.eski ? `İnternet yok: ${tarihYaz(s.t)} kaydedilen liste gösteriliyor.` : "");
   } catch (e) {
     if (no !== durum.istek) return;
@@ -1143,6 +1252,511 @@ function uygulamaKur() {
 }
 
 // ---------------------------------------------------------------------------
+// Rehber: yer detay ekranı, fotoğraflar, doğrulanmış yazılı rehber, sesli anlatım, internetsiz indirme
+// İçerik yalnız kesin kimlikle (Wikidata ya da OSM nesne kimliği) eşleşir; eşleşme yoksa hiçbir metin gösterilmez.
+// ---------------------------------------------------------------------------
+const REHBER_KABI = "tabelarehber"; // sw.js ile aynı ad: yazılı rehberler (açılınca kendiliğinden saklanır)
+const MEDYA_KABI = "tabelamedya";   // sw.js ile aynı ad: yalnız kullanıcının indirdiği fotoğraf ve sesler
+const iki = (p) => String(p).padStart(2, "0");
+const mutlak = (u) => new URL(u, location.href).href;
+let rehberDizin = null;
+
+async function rehberDiziniYukle() {
+  if (rehberDizin) return rehberDizin;
+  try {
+    let r = null;
+    if (navigator.onLine !== false) { try { r = await fetch("icerik/dizin.json", { cache: "reload" }); } catch (e) { r = null; } }
+    if (!r || !r.ok) r = await fetch("icerik/dizin.json");
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (!j || !j.yerler) return null;
+    rehberDizin = j;
+    if (el.icerik.querySelector(".liste")) listeyiCiz(); // "Rehber" rozetleri görünsün
+    return j;
+  } catch (e) { return null; }
+}
+function rehberAnahtari(k) {
+  if (!rehberDizin || !k) return null;
+  return (k.d && rehberDizin.yerler[k.d]) || (k.i && rehberDizin.yerler[k.i]) || null;
+}
+const ilRehberleri = new Map();
+function ilRehberi(p) {
+  if (!ilRehberleri.has(p)) {
+    const s = fetch(`icerik/il/${iki(p)}.json`).then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
+    s.catch(() => ilRehberleri.delete(p));
+    ilRehberleri.set(p, s);
+  }
+  return ilRehberleri.get(p);
+}
+async function rehberIcerigi(k) {
+  await rehberDiziniYukle();
+  const anahtar = rehberAnahtari(k);
+  if (!anahtar) return { durum: "yok" };
+  const sayfa = rehberDizin.sayfalar[anahtar];
+  if (!sayfa) return { durum: "yok" };
+  const p = sayfa.p.includes(k._p) ? k._p : sayfa.p[0];
+  try {
+    const il = await ilRehberi(p);
+    const ic = il[anahtar];
+    return ic ? { durum: "var", ic, p, anahtar } : { durum: "yok" };
+  } catch (e) { return { durum: "indirilmemis", p, anahtar }; }
+}
+const ilGorselleri = new Map();
+async function gorseller(k) {
+  if (!k.d || k._p == null) return [];
+  if (!ilGorselleri.has(k._p)) {
+    const s = fetch(`veri/gorsel/${iki(k._p)}.json`).then((r) => (r.ok ? r.json() : {})).catch(() => { ilGorselleri.delete(k._p); return {}; });
+    ilGorselleri.set(k._p, s);
+  }
+  const j = await ilGorselleri.get(k._p);
+  const liste = Array.isArray(j[k.d]) ? j[k.d] : [];
+  return liste.filter((f) => f && /^https:\/\//.test(f.u || "") && f.l && f.y && f.s); // künyesi eksik fotoğraf gösterilmez
+}
+function ilceAdi(k) {
+  const il = yerelIndeks && yerelIndeks.iller[k._p];
+  const d = il && il.ilce && il.ilce.find((x) => x.id === k._ic);
+  return d ? d.n : "";
+}
+function osmBaglantisi(k) {
+  const m = /^([nwr])(\d+)$/.exec(k.i || "");
+  return m ? `https://www.openstreetmap.org/${{ n: "node", w: "way", r: "relation" }[m[1]]}/${m[2]}` : null;
+}
+
+// --- Detay ekranı
+let acikYer = null, listeKaydirma = 0, oynatici = null, acikFotolar = [], buyukSira = 0;
+
+function yolCubugu(k) {
+  const c = $("yolCubuk");
+  const ikinci = ANDROID
+    ? `<a class="ikincil" href="geo:${k.a},${k.o}?q=${k.a},${k.o}(${encodeURIComponent(k.n)})">🗺️ Başka harita</a>`
+    : (k.w ? `<a class="ikincil" href="${kacir(k.w)}" target="_blank" rel="noopener">📖 Vikipedi</a>` : "");
+  c.innerHTML = `<a class="birincil" id="yolTarifi" href="${haritaAdresi(k)}" target="_blank" rel="noopener">🧭 Yol tarifi al</a>${ikinci}`;
+  c.hidden = false;
+}
+
+async function detayAc(k, gecmiseEkle = true) {
+  if (!k) return;
+  if (oynatici) { oynatici.dur(); oynatici = null; }
+  acikYer = k;
+  if ($("detay").hidden) listeKaydirma = window.scrollY;
+  const [katAdi, simge] = KAT[k.c];
+  const yerAdlari = [ilceAdi(k), k._p ? ilAdi(k._p) : ""].filter(Boolean).join(", ");
+  $("detayUstAd").textContent = k.n;
+  $("detayGovde").innerHTML =
+    `<div class="kapak" id="kapak"><div class="yer-tutucu" aria-hidden="true"><span>${simge}</span></div></div>` +
+    `<div class="detay-bas"><h2 id="detayAd" tabindex="-1">${kacir(k.n)}</h2><div class="yer-meta">${kacir([yerAdlari, katAdi].filter(Boolean).join(" · "))}${k.m != null ? " · " + kmYaz(k.m) + " uzakta" : ""}</div></div>` +
+    `<div id="detayRehber"><div class="uyari" role="status">Rehber yükleniyor…</div></div>`;
+  $("detay").hidden = false;
+  $("detay").scrollTop = 0;
+  document.body.classList.add("detayda");
+  yolCubugu(k);
+  if (gecmiseEkle) history.pushState({ detay: true }, "", "#yer");
+  $("detayAd").focus({ preventScroll: true });
+
+  const [reh, fotolar] = await Promise.all([rehberIcerigi(k), gorseller(k)]);
+  if (acikYer !== k) return;
+  acikFotolar = fotolar;
+  kapakCiz(k, fotolar, simge);
+  $("detayRehber").innerHTML = rehberHtml(k, reh, fotolar);
+  rehberOlaylari(k, reh, fotolar);
+}
+
+function fotoKunye(f) {
+  const lisans = f.lu ? `<a href="${kacir(f.lu)}" target="_blank" rel="noopener">${kacir(f.l)}</a>` : kacir(f.l);
+  return `Fotoğraf: ${kacir(f.y)} · ${lisans} · <a href="${kacir(f.s)}" target="_blank" rel="noopener">Wikimedia Commons</a>`;
+}
+function kapakCiz(k, fotolar, simge) {
+  const kapak = $("kapak");
+  if (!fotolar.length) return;
+  const f = fotolar[0];
+  kapak.innerHTML = `<button type="button" data-foto="0" aria-label="Fotoğrafı büyüt"><img src="${kacir(f.u)}" alt="${kacir(k.n)} fotoğrafı" decoding="async"></button>` +
+    (fotolar.length > 1 ? `<span class="sayi">1 / ${fotolar.length}</span>` : "");
+  kapak.insertAdjacentHTML("afterend", `<p class="foto-kunye">${fotoKunye(f)}</p>`);
+  kapak.querySelector("img").addEventListener("error", () => {
+    kapak.innerHTML = `<div class="yer-tutucu" aria-hidden="true"><span>${simge}</span></div>`;
+    const kn = kapak.nextElementSibling;
+    if (kn && kn.classList.contains("foto-kunye")) kn.textContent = navigator.onLine === false ? "Fotoğraf bu cihaza indirilmemiş; internetsizken görüntülenemiyor." : "Fotoğraf şu an yüklenemedi.";
+  });
+}
+
+function rehberHtml(k, reh, fotolar) {
+  let h = "";
+  if (reh.durum === "var") {
+    const ic = reh.ic;
+    h += `<section class="bolum kisa" aria-labelledby="bKisa"><h3 id="bKisa">Bir dakikada keşfet</h3><p>${kacir(ic.kisa)}</p></section>`;
+    h += `<section class="bolum oynatici" aria-labelledby="bSes"><h3 id="bSes">Sesli rehber</h3>
+      <button type="button" class="ana-dugme" id="sesAna">▶ Sesli Rehberi Dinle</button>
+      <input type="range" id="sesIlerleme" min="0" max="1000" value="0" aria-label="Anlatımın neresinde olduğun" disabled>
+      <div class="zaman"><span id="sesSimdi">0:00</span><span id="sesToplam"></span></div>
+      <div class="satir2"><button type="button" id="sesGeri" aria-label="15 saniye geri" disabled>⏪ 15 sn</button><button type="button" id="sesBastan" aria-label="Baştan başlat" disabled>⏮ Baştan</button><button type="button" id="sesIleri" aria-label="15 saniye ileri" disabled>15 sn ⏩</button></div>
+      <div class="satir2"><select id="sesHiz" aria-label="Okuma hızı"><option value="0.8">Yavaş (0,8×)</option><option value="1" selected>Normal (1×)</option><option value="1.25">Hızlı (1,25×)</option><option value="1.5">Çok hızlı (1,5×)</option></select></div>
+      <p class="ses-not" id="sesNot" role="status"></p></section>`;
+    if (ic.bolumler && ic.bolumler.length) {
+      h += `<section class="bolum" aria-labelledby="bHikaye"><h3 id="bHikaye">Hikâyesini keşfet</h3>` +
+        ic.bolumler.map((b) => `<h4>${kacir(b.baslik)}</h4><p>${kacir(b.metin)}</p>`).join("") + `</section>`;
+    }
+    if (ic.ilginc && ic.ilginc.length) {
+      h += `<section class="bolum" aria-labelledby="bIlginc"><h3 id="bIlginc">Biliyor muydunuz?</h3><ul class="ilginc-liste">` +
+        ic.ilginc.map((i) => `<li>${i.efsane ? '<span class="efsane">Efsane / inanış</span>' : ""}${kacir(i.metin)}</li>`).join("") + `</ul></section>`;
+    }
+  } else if (reh.durum === "indirilmemis") {
+    h += `<div class="uyari">Bu yerin rehberi var, ama bu cihaza indirilmemiş. İnternete bağlanınca açılır; ya da internet varken “İndirilenler ve depolama” bölümünden bu ilin rehberini indir.</div>`;
+  } else {
+    h += `<div class="uyari">Bu yer hakkında doğrulanmış ayrıntılı anlatım henüz hazırlanmadı.${k.w ? ` <a href="${kacir(k.w)}" target="_blank" rel="noopener">Vikipedi'de oku</a>` : ""}</div>`;
+  }
+  if (fotolar.length > 1) {
+    h += `<section class="bolum" aria-labelledby="bFoto"><h3 id="bFoto">Fotoğraflar (${fotolar.length})</h3><div class="galeri">` +
+      fotolar.map((f, x) => `<button type="button" data-foto="${x}" aria-label="${x + 1}. fotoğrafı büyüt"><img loading="lazy" decoding="async" src="${kacir(f.u)}" alt="${kacir(k.n)} fotoğrafı ${x + 1}"></button>`).join("") +
+      `</div><p class="kucuk-not">Fotoğraflar Wikimedia Commons'tan; her birinin yazarı ve lisansı büyütünce görünür.</p></section>`;
+  }
+  const kaynakSatirlari = [];
+  if (reh.durum === "var") {
+    for (const s of reh.ic.kaynaklar) kaynakSatirlari.push(`<li><a href="${kacir(s.url)}" target="_blank" rel="noopener">${kacir(s.ad)}</a> — ${kacir(s.kurum)} (erişim ${kacir(tarihGoster(s.erisim))})</li>`);
+  }
+  const osm = osmBaglantisi(k);
+  if (osm) kaynakSatirlari.push(`<li><a href="${osm}" target="_blank" rel="noopener">Konum kaydı</a> — OpenStreetMap katkıcıları (ODbL)</li>`);
+  if (kaynakSatirlari.length || reh.durum === "var") {
+    h += `<section class="bolum" aria-labelledby="bKaynak"><h3 id="bKaynak">Kaynaklar</h3><ul class="kaynak-liste">${kaynakSatirlari.join("")}</ul>` +
+      (reh.durum === "var" ? `<p class="kucuk-not">Son kontrol: ${kacir(tarihGoster(reh.ic.dogrulama))} · İçerik sürümü ${reh.ic.surum}. Metin bu kaynaklar karşılaştırılarak özgün olarak yazıldı.${reh.ic.ses ? " " + kacir(reh.ic.ses.lisans) + "." : ""}</p>` : "") +
+      `</section>`;
+  }
+  if (reh.durum === "var") {
+    h += `<section class="bolum" aria-labelledby="bIndir"><h3 id="bIndir">İnternetsiz kullanım</h3><div id="indirDurum"><p class="durum-satir">Kontrol ediliyor…</p></div>
+      <button type="button" class="indir-dugme" id="yerIndir">📥 Bu rehberi fotoğraf ve sesiyle indir</button></section>`;
+  }
+  return h;
+}
+
+async function indirmeDurumuYaz(k, reh, fotolar) {
+  const kutu = $("indirDurum");
+  if (!kutu || !("caches" in window)) return;
+  const rk = await caches.open(REHBER_KABI), mk = await caches.open(MEDYA_KABI);
+  const metin = !!(await rk.match(mutlak(`icerik/il/${iki(reh.p)}.json`)));
+  let foto = 0;
+  for (const f of fotolar) if (await mk.match(f.u)) foto++;
+  const ses = reh.ic.ses ? !!(await mk.match(mutlak(reh.ic.ses.dosya))) : null;
+  if (acikYer !== k) return;
+  kutu.innerHTML =
+    `<p class="durum-satir">${metin ? "✅ Metin telefonda" : "⬜ Metin henüz telefonda değil"}</p>` +
+    (fotolar.length ? `<p class="durum-satir">${foto === fotolar.length ? "✅" : "⬜"} Fotoğraflar: ${foto} / ${fotolar.length} telefonda</p>` : "") +
+    (ses === null ? `<p class="durum-satir">ℹ️ Hazır ses kaydı yok; cihazın sesli okuma özelliği kullanılır.</p>` : `<p class="durum-satir">${ses ? "✅ Ses kaydı telefonda" : "⬜ Ses kaydı henüz telefonda değil"}</p>`);
+}
+
+async function yerRehberiniIndir(k, reh, fotolar, dugme) {
+  if (navigator.onLine === false) { dugme.textContent = "İnternet yok; bağlanınca tekrar dene"; return; }
+  dugme.disabled = true; dugme.textContent = "İndiriliyor…";
+  let hata = 0;
+  try {
+    const rk = await caches.open(REHBER_KABI), mk = await caches.open(MEDYA_KABI);
+    const metinUrl = mutlak(`icerik/il/${iki(reh.p)}.json`);
+    const r = await fetch(metinUrl, { cache: "reload" });
+    if (r.ok) await rk.put(metinUrl, r); else hata++;
+    for (const f of fotolar) for (const u of [...new Set([f.u, f.b].filter(Boolean))]) {
+      if (!(await medyaKaydet(mk, u))) hata++;
+    }
+    if (reh.ic.ses) {
+      try { const u = mutlak(reh.ic.ses.dosya); const x = await fetch(u); if (x.ok) await mk.put(u, x); else hata++; } catch (e) { hata++; }
+    }
+  } catch (e) { hata++; }
+  dugme.disabled = false;
+  dugme.textContent = hata ? "Bir kısmı indirilemedi; tekrar dene" : "✅ İndirildi";
+  indirmeDurumuYaz(k, reh, fotolar);
+}
+
+function rehberOlaylari(k, reh, fotolar) {
+  $("detayGovde").querySelectorAll("[data-foto]").forEach((b) => b.addEventListener("click", () => buyukAc(+b.dataset.foto)));
+  $("detayGovde").querySelectorAll(".galeri img").forEach((img) => img.addEventListener("error", () => {
+    img.parentElement.innerHTML = `<span class="yok-gorsel">${navigator.onLine === false ? "İndirilmedi" : "Yüklenemedi"}</span>`;
+  }));
+  if (reh.durum !== "var") return;
+  oynatici = sesOynatici(reh);
+  const d = $("yerIndir");
+  if (d) d.addEventListener("click", () => yerRehberiniIndir(k, reh, fotolar, d));
+  indirmeDurumuYaz(k, reh, fotolar);
+}
+
+function detayKapat(geriden) {
+  if ($("detay").hidden) return;
+  if (!geriden && history.state && history.state.detay) { history.back(); return; } // popstate yine buraya gelir
+  if (oynatici) { oynatici.dur(); oynatici = null; }
+  buyukKapat();
+  $("detay").hidden = true;
+  $("yolCubuk").hidden = true;
+  document.body.classList.remove("detayda");
+  const k = acikYer;
+  acikYer = null;
+  window.scrollTo(0, listeKaydirma);
+  const kart = k && el.icerik.querySelector(`button.git[data-x="${k._x}"]`);
+  if (kart) kart.focus({ preventScroll: true });
+}
+
+// --- Büyük fotoğraf
+function buyukAc(x) {
+  if (!acikFotolar.length) return;
+  buyukSira = (x + acikFotolar.length) % acikFotolar.length;
+  const f = acikFotolar[buyukSira];
+  const img = $("buyukResim");
+  img.src = f.b || f.u;
+  img.alt = `${acikYer ? acikYer.n : ""} fotoğrafı ${buyukSira + 1}`;
+  $("buyukSira").textContent = `${buyukSira + 1} / ${acikFotolar.length}`;
+  $("buyukKunye").innerHTML = fotoKunye(f);
+  $("buyukOnceki").hidden = $("buyukSonraki").hidden = acikFotolar.length < 2;
+  $("buyukFoto").hidden = false;
+  $("buyukKapat").focus();
+}
+function buyukKapat() { $("buyukFoto").hidden = true; $("buyukResim").removeAttribute("src"); }
+
+// --- Sesli rehber: önce hazır ses kaydı, yoksa cihazın Türkçe sesi, o da yoksa yalnız metin
+const sureYaz = (sn) => { sn = Math.max(0, Math.round(sn || 0)); return `${Math.floor(sn / 60)}:${String(sn % 60).padStart(2, "0")}`; };
+const ROMA_SIRA = { I: "Birinci", II: "İkinci", III: "Üçüncü", IV: "Dördüncü", V: "Beşinci", VI: "Altıncı", VII: "Yedinci", VIII: "Sekizinci", IX: "Dokuzuncu", X: "Onuncu" };
+// Sesli okuma için kısaltmaları açar (arac/ses.mjs ile aynı kurallar: hazır ses ile cihaz sesi aynı metni okur)
+function okunabilirMetin(s) {
+  return s
+    .replace(/(?<!\p{L})MÖ(?!\p{L})/gu, "milattan önce").replace(/(?<!\p{L})MS(?!\p{L})/gu, "milattan sonra")
+    .replace(/\bHz\.\s/g, "Hazreti ")
+    .replace(/\b(I|II|III|IV|V|VI|VII|VIII|IX|X)\.\s(?=\p{Lu})/gu, (m, r) => ROMA_SIRA[r] + " ")
+    .replace(/(\d)\s?°C/g, "$1 derece").replace(/(\d)\s?km\b/g, "$1 kilometre").replace(/(\d)\s?m\b/g, "$1 metre")
+    .replace(/(\d)\s?-\s?(\d)/g, "$1 ile $2")
+    .replace(/[“”"]/g, "").replace(/\s+/g, " ").trim();
+}
+function anlatimMetni(ic) {
+  const parcalar = [ic.ad + ".", ic.kisa];
+  for (const b of ic.bolumler || []) parcalar.push(b.baslik + (/[.?!]$/.test(b.baslik) ? " " : ". ") + b.metin);
+  if (ic.ilginc && ic.ilginc.length) { parcalar.push("Biliyor muydunuz?"); for (const i of ic.ilginc) parcalar.push(i.metin); }
+  return okunabilirMetin(parcalar.join(" "));
+}
+function sesArayuzu() {
+  return {
+    ana: $("sesAna"), ilerleme: $("sesIlerleme"), simdi: $("sesSimdi"), toplam: $("sesToplam"),
+    geri: $("sesGeri"), ileri: $("sesIleri"), bastan: $("sesBastan"), hiz: $("sesHiz"), not: $("sesNot"),
+    etkin(e) { for (const x of [this.ilerleme, this.geri, this.ileri, this.bastan]) x.disabled = !e; },
+    calisiyor(c) { this.ana.textContent = c ? "⏸ Duraklat" : "▶ Sesli Rehberi Dinle"; this.ana.setAttribute("aria-pressed", String(c)); }
+  };
+}
+function sesOynatici(reh) {
+  const a = sesArayuzu();
+  if (!a.ana) return null;
+  if (reh.ic.ses) return kayitliSes(a, reh.ic, () => cihazSesi(a, reh.ic));
+  return cihazSesi(a, reh.ic);
+}
+function kayitliSes(a, ic, yedek) {
+  const ses = new Audio();
+  ses.preload = "metadata";
+  let blobUrl = null, hazir = false, devir = null;
+  const kaynak = mutlak(ic.ses.dosya);
+  const yukle = async () => {
+    if (hazir) return;
+    try {
+      const mk = "caches" in window ? await caches.open(MEDYA_KABI) : null;
+      const kayit = mk && await mk.match(kaynak);
+      if (kayit) { blobUrl = URL.createObjectURL(await kayit.blob()); ses.src = blobUrl; }
+      else ses.src = kaynak;
+    } catch (e) { ses.src = kaynak; }
+    hazir = true;
+  };
+  a.not.textContent = "Hazır sesli anlatım. " + ic.ses.lisans + ".";
+  if (ic.ses.sure) a.toplam.textContent = sureYaz(ic.ses.sure);
+  ses.addEventListener("loadedmetadata", () => { a.toplam.textContent = sureYaz(ses.duration); a.etkin(true); });
+  ses.addEventListener("timeupdate", () => { a.simdi.textContent = sureYaz(ses.currentTime); if (ses.duration) a.ilerleme.value = Math.round((ses.currentTime / ses.duration) * 1000); });
+  ses.addEventListener("play", () => a.calisiyor(true));
+  ses.addEventListener("pause", () => a.calisiyor(false));
+  ses.addEventListener("ended", () => { a.calisiyor(false); a.ilerleme.value = 1000; });
+  ses.addEventListener("error", () => {
+    if (!hazir || !ses.src) return;
+    a.not.textContent = navigator.onLine === false ? "Ses kaydı bu cihaza indirilmemiş; internetsizken çalınamaz. Cihazın sesli okuması deneniyor." : "Ses kaydı açılamadı; cihazın sesli okuması deneniyor.";
+    temizle();
+    devir = yedek();
+  });
+  const temizle = () => { ses.pause(); ses.removeAttribute("src"); try { ses.load(); } catch (e) {} if (blobUrl) URL.revokeObjectURL(blobUrl); blobUrl = null; };
+  a.ana.onclick = async () => { if (devir) return; await yukle(); if (ses.paused) ses.play().catch(() => {}); else ses.pause(); };
+  a.geri.onclick = () => { ses.currentTime = Math.max(0, ses.currentTime - 15); };
+  a.ileri.onclick = () => { ses.currentTime = Math.min(ses.duration || 0, ses.currentTime + 15); };
+  a.bastan.onclick = () => { ses.currentTime = 0; ses.play().catch(() => {}); };
+  a.hiz.onchange = () => { ses.playbackRate = +a.hiz.value; };
+  a.ilerleme.oninput = () => { if (ses.duration) ses.currentTime = (a.ilerleme.value / 1000) * ses.duration; };
+  return { tur: "kayit", dur() { temizle(); if (devir) devir.dur(); }, ses };
+}
+
+async function turkceSes() {
+  const ss = window.speechSynthesis;
+  let sesler = ss.getVoices();
+  if (!sesler.length) {
+    await new Promise((r) => { const t = setTimeout(r, 1500); ss.addEventListener("voiceschanged", () => { clearTimeout(t); r(); }, { once: true }); });
+    sesler = ss.getVoices();
+  }
+  return sesler.find((v) => /^tr([-_]|$)/i.test(v.lang)) || null;
+}
+function cihazSesi(a, ic) {
+  const ss = window.speechSynthesis;
+  const KARAKTER_SN = 14; // 1× hızda saniyede yaklaşık karakter (süre tahmini için)
+  let iptal = false;
+  if (!ss || !window.SpeechSynthesisUtterance) {
+    a.ana.disabled = true; a.etkin(false);
+    a.not.textContent = "Bu tarayıcı sesli okumayı desteklemiyor. Rehberi yukarıdan okuyabilirsin.";
+    return { tur: "yok", dur() {} };
+  }
+  const cumleler = anlatimMetni(ic).split(/(?<=[.!?…])\s+/).filter((x) => x.trim());
+  const birikim = []; let t = 0;
+  for (const c of cumleler) { birikim.push(t); t += c.length; }
+  const toplamKarakter = t;
+  let sira = 0, calisiyor = false, jeton = 0, ses = null, hazir = false;
+  const hiz = () => +a.hiz.value || 1;
+  const goster = () => {
+    const kar = birikim[Math.min(sira, cumleler.length - 1)] || 0;
+    a.ilerleme.value = Math.round((kar / toplamKarakter) * 1000);
+    a.simdi.textContent = sureYaz(kar / (KARAKTER_SN * hiz()));
+    a.toplam.textContent = "~" + sureYaz(toplamKarakter / (KARAKTER_SN * hiz()));
+  };
+  const konus = () => {
+    const benim = ++jeton;
+    ss.cancel();
+    if (sira >= cumleler.length) { calisiyor = false; a.calisiyor(false); sira = 0; goster(); return; }
+    const u = new SpeechSynthesisUtterance(cumleler[sira]);
+    u.lang = "tr-TR"; if (ses) u.voice = ses; u.rate = hiz();
+    u.onend = () => { if (benim !== jeton || iptal) return; sira++; goster(); konus(); };
+    u.onerror = (e) => { if (benim !== jeton || iptal) return; if (e.error === "interrupted" || e.error === "canceled") return; calisiyor = false; a.calisiyor(false); a.not.textContent = "Sesli okuma durdu (" + (e.error || "hata") + ")."; };
+    calisiyor = true; a.calisiyor(true); goster();
+    ss.speak(u);
+  };
+  const durdur = () => { jeton++; ss.cancel(); calisiyor = false; a.calisiyor(false); };
+  const atla = (sn) => {
+    const hedef = (birikim[sira] || 0) + sn * KARAKTER_SN * hiz();
+    let i = 0; while (i < cumleler.length - 1 && birikim[i + 1] <= hedef) i++;
+    sira = Math.max(0, Math.min(cumleler.length - 1, i));
+    goster(); if (calisiyor) konus();
+  };
+  a.ana.disabled = true;
+  a.not.textContent = "Cihazın Türkçe sesi aranıyor…";
+  turkceSes().then((v) => {
+    if (iptal) return;
+    if (!v) {
+      a.ana.disabled = true; a.etkin(false);
+      a.not.textContent = "Bu cihazda Türkçe metin okuma sesi bulunamadı. Telefonun ayarlarından Türkçe ses yükleyebilir ya da rehberi okuyabilirsin.";
+      return;
+    }
+    ses = v; hazir = true;
+    a.ana.disabled = false; a.etkin(true); goster();
+    a.not.textContent = `Cihazın Türkçe sesiyle okunuyor (${v.name}).` + (v.localService ? " Bu ses cihazda kurulu." : " Bu ses internet gerektirebilir.");
+  });
+  a.ana.onclick = () => { if (!hazir) return; if (calisiyor) durdur(); else konus(); };
+  a.geri.onclick = () => atla(-15);
+  a.ileri.onclick = () => atla(15);
+  a.bastan.onclick = () => { sira = 0; goster(); konus(); };
+  a.hiz.onchange = () => { goster(); if (calisiyor) konus(); };
+  a.ilerleme.oninput = () => {
+    const hedef = (a.ilerleme.value / 1000) * toplamKarakter;
+    let i = 0; while (i < cumleler.length - 1 && birikim[i + 1] <= hedef) i++;
+    sira = i; goster(); if (calisiyor) konus();
+  };
+  return { tur: "cihaz", dur() { iptal = true; durdur(); } };
+}
+
+// --- İndirilenler ve depolama
+const MB = (b) => (b / 1048576).toFixed(1).replace(".", ",") + " MB";
+async function medyaKaydet(mk, u) {
+  try { const x = await fetch(u, { mode: "cors" }); if (x.ok) { await mk.put(u, x); return true; } } catch (e) {}
+  try { const x = await fetch(u, { mode: "no-cors" }); if (x.type === "opaque" || x.ok) { await mk.put(u, x); return true; } } catch (e) {}
+  return false;
+}
+function indirilenIller() { try { return JSON.parse(ayarOku("rehberIller") || "{}"); } catch (e) { return {}; } }
+async function depoAc() {
+  $("depoPanel").hidden = false;
+  await depoCiz();
+  $("depoKapat").focus();
+}
+async function depoCiz() {
+  const kutu = $("depoIcerik");
+  let h = "";
+  if (navigator.storage && navigator.storage.estimate) {
+    try {
+      const t = await navigator.storage.estimate();
+      const kalici = navigator.storage.persisted ? await navigator.storage.persisted() : false;
+      h += `<p class="durum-satir">Bu uygulamanın kullandığı alan: <b>${MB(t.usage || 0)}</b>${t.quota ? ` (ayrılabilen ${MB(t.quota)})` : ""}.${kalici ? " Tarayıcı bu kayıtları silmeyecek şekilde işaretli." : ""}</p>`;
+    } catch (e) {}
+  }
+  const ix = await yerelIndeksi();
+  const tamam = ix && ayarOku("indirilenTarih") === ix.tarih;
+  h += `<p class="durum-satir">${tamam ? "✅" : "⬜"} Türkiye yer listesi (81 il)${tamam ? " telefonda" : " henüz tam inmedi"}.</p>`;
+  let medya = 0, rehberMetin = 0;
+  if ("caches" in window) {
+    try { medya = (await (await caches.open(MEDYA_KABI)).keys()).length; rehberMetin = (await (await caches.open(REHBER_KABI)).keys()).filter((r) => /\/icerik\/il\//.test(r.url)).length; } catch (e) {}
+  }
+  h += `<p class="durum-satir">Telefondaki il rehberi dosyası: <b>${rehberMetin}</b> · İndirilen fotoğraf ve ses: <b>${medya}</b> dosya</p>`;
+  await rehberDiziniYukle();
+  const plaka = +el.il.value || 0;
+  if (plaka) {
+    const sayi = rehberDizin ? Object.values(rehberDizin.sayfalar).filter((s) => s.p.includes(plaka)).length : 0;
+    h += `<h2 style="font-size:17px;margin-top:16px">${kacir(ilAdi(plaka))} rehberi</h2>`;
+    if (!sayi) h += `<p class="durum-satir">Bu ilde henüz hazırlanmış rehber yok.</p>`;
+    else h += `<p class="durum-satir">${sayi} yerin doğrulanmış rehberi var.</p>
+      <label class="durum-satir"><input type="checkbox" id="ilMedya"> Fotoğrafları ve ses kayıtlarını da indir (daha fazla yer kaplar)</label>
+      <button type="button" class="indir-dugme" id="ilIndir">📥 ${kacir(ilAdi(plaka))} rehberini internetsiz kullanım için indir</button>`;
+  } else h += `<p class="durum-satir">Bir ilin rehberini indirmek için önce yukarıdan il seç.</p>`;
+  const iller = Object.entries(indirilenIller());
+  if (iller.length) h += `<p class="durum-satir">İndirdiğin il rehberleri: ${iller.map(([p, t]) => `${kacir(ilAdi(+p))} (${kacir(tarihGoster(t))})`).join(", ")}</p>`;
+  h += `<button type="button" class="indir-dugme" id="medyaTemizle">🗑️ İndirilen fotoğraf ve sesleri sil</button>
+    <p class="kucuk-not">Yazılı rehberler ve yer listesi silinmez; yalnız fotoğraf ve ses dosyaları silinir.</p>`;
+  kutu.innerHTML = h;
+  const d = $("ilIndir");
+  if (d) d.addEventListener("click", () => ilRehberiniIndir(plaka, $("ilMedya").checked, d));
+  $("medyaTemizle").addEventListener("click", async () => { if ("caches" in window) await caches.delete(MEDYA_KABI); depoCiz(); });
+}
+async function ilRehberiniIndir(plaka, medyaDa, dugme) {
+  if (navigator.onLine === false) { dugme.textContent = "İnternet yok; bağlanınca tekrar dene"; return; }
+  dugme.disabled = true; dugme.textContent = "İndiriliyor…";
+  let hata = 0;
+  try {
+    const rk = await caches.open(REHBER_KABI);
+    const metinUrl = mutlak(`icerik/il/${iki(plaka)}.json`);
+    const r = await fetch(metinUrl, { cache: "reload" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const il = await r.clone().json();
+    await rk.put(metinUrl, r);
+    ilRehberleri.delete(plaka);
+    await fetch(`veri/gorsel/${iki(plaka)}.json`, { cache: "reload" }).catch(() => hata++); // sw.js veri kabına yazar
+    if (medyaDa) {
+      const mk = await caches.open(MEDYA_KABI);
+      const gorselListesi = await fetch(`veri/gorsel/${iki(plaka)}.json`).then((x) => (x.ok ? x.json() : {})).catch(() => ({}));
+      const qler = new Set(Object.entries(rehberDizin ? rehberDizin.yerler : {}).filter(([q, a]) => /^Q/.test(q) && il[a]).map(([q]) => q));
+      for (const q of qler) for (const f of gorselListesi[q] || []) for (const u of [...new Set([f.u, f.b].filter(Boolean))]) {
+        if (!(await medyaKaydet(mk, u))) hata++;
+      }
+      for (const ic of Object.values(il)) if (ic.ses) {
+        try { const u = mutlak(ic.ses.dosya); const x = await fetch(u); if (x.ok) await mk.put(u, x); else hata++; } catch (e) { hata++; }
+      }
+    }
+    const kayit = indirilenIller(); kayit[plaka] = new Date().toISOString().slice(0, 10); ayarYaz("rehberIller", JSON.stringify(kayit));
+  } catch (e) { hata++; }
+  dugme.disabled = false;
+  dugme.textContent = hata ? "Bir kısmı indirilemedi; tekrar dene" : "✅ İndirildi";
+  depoCiz();
+}
+
+function rehberKur() {
+  el.icerik.addEventListener("click", (e) => {
+    const b = e.target.closest("button.git[data-x]");
+    if (!b || !durum.sonListe) return;
+    detayAc(durum.sonListe[+b.dataset.x]);
+  });
+  $("detayGeri").addEventListener("click", () => detayKapat(false));
+  window.addEventListener("popstate", () => { if (!$("detay").hidden && !(history.state && history.state.detay)) detayKapat(true); });
+  $("buyukKapat").addEventListener("click", buyukKapat);
+  $("buyukOnceki").addEventListener("click", () => buyukAc(buyukSira - 1));
+  $("buyukSonraki").addEventListener("click", () => buyukAc(buyukSira + 1));
+  $("depoAc").addEventListener("click", depoAc);
+  $("depoKapat").addEventListener("click", () => { $("depoPanel").hidden = true; $("depoAc").focus(); });
+  $("depoPanel").addEventListener("click", (e) => { if (e.target === $("depoPanel")) $("depoPanel").hidden = true; });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (!$("buyukFoto").hidden) buyukKapat();
+    else if (!$("depoPanel").hidden) $("depoPanel").hidden = true;
+    else if (!$("detay").hidden) detayKapat(false);
+  });
+  if (location.hash === "#yer") history.replaceState(null, "", location.pathname + location.search);
+  rehberDiziniYukle();
+}
+
+// ---------------------------------------------------------------------------
 // Olaylar
 // ---------------------------------------------------------------------------
 el.il.addEventListener("change", () => ilSecildi(+el.il.value || 0));
@@ -1160,6 +1774,7 @@ el.cipler.addEventListener("click", (e) => {
 
 ilSecenekleri();
 uygulamaKur();
+rehberKur();
 // Uygulama açılır açılmaz değil, ilk ekran çizildikten biraz sonra
 setTimeout(turkiyeyiIndir, 1500);
 (function () {

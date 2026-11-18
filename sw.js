@@ -1,9 +1,12 @@
 // Kahverengi Tabela service worker: uygulama kabuğu cihazda kalır, internet yokken de açılır.
 // Yer listeleri burada değil, sayfanın kendi kaydında (localStorage) durur.
 // Yeni sürüm yayınlarken SURUM'u artır.
-const SURUM = "tabela-5";
+const SURUM = "tabela-6";
 // Aylık veri dosyaları ayrı kapta: sürüm değişince silinmez
 const VERI_KABI = "tabelaveri";
+// Yazılı rehberler (açılınca saklanır) ve kullanıcının indirdiği fotoğraf/ses: bunlar da sürüm değişince silinmez
+const REHBER_KABI = "tabelarehber";
+const MEDYA_KABI = "tabelamedya";
 const KABUK = [
   "./",
   "./manifest.webmanifest",
@@ -31,13 +34,24 @@ self.addEventListener("fetch", (e) => {
   const istek = e.request;
   if (istek.method !== "GET") return;
   const url = new URL(istek.url);
+  // Wikimedia fotoğrafları: kullanıcı indirdiyse cihazdan, yoksa ağdan (kendiliğinden saklanmaz)
+  if (url.hostname === "upload.wikimedia.org" || url.hostname === "thumb.wikimedia.org") {
+    e.respondWith(caches.open(MEDYA_KABI).then((k) => k.match(istek)).then((kayit) => kayit || fetch(istek)));
+    return;
+  }
   // Harita verisi, Google Haritalar, Vikipedi: dokunma
   if (url.origin !== self.location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
 
+  // Hazır ses kayıtları büyük: yalnız kullanıcı indirdiyse cihazdan
+  if (url.pathname.includes("/icerik/ses/")) {
+    e.respondWith(caches.open(MEDYA_KABI).then((k) => k.match(istek, { ignoreSearch: true })).then((kayit) => kayit || fetch(istek)));
+    return;
+  }
+
   // veri/: cihazdaki kopya hemen verilir, arkada yenisi indirilir (ayda bir değişir)
-  if (url.pathname.includes("/veri/")) {
+  if (url.pathname.includes("/veri/") || url.pathname.includes("/icerik/")) {
     e.respondWith((async () => {
-      const kap = await caches.open(VERI_KABI);
+      const kap = await caches.open(url.pathname.includes("/icerik/") ? REHBER_KABI : VERI_KABI);
       // Uygulama "reload" isterse (Türkiye listesini indirirken, aylık yenilemede): önce ağ
       if (istek.cache === "reload") {
         try {

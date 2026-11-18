@@ -38,16 +38,16 @@ jobs:
           curl -fsSL --retry 3 -o "$RUNNER_TEMP/turkiye.osm.pbf" https://download.geofabrik.de/europe/turkey-latest.osm.pbf
           ls -lh "$RUNNER_TEMP/turkiye.osm.pbf"
           bash arac/veri.sh "$RUNNER_TEMP/turkiye.osm.pbf"
+      # Rehber metinleri: icerik/kaynak/*.json denetlenir ve yerlere kesin kimlikle bağlanır
+      - name: Rehber içeriklerini hazırla
+        continue-on-error: true
+        run: node arac/icerik.mjs ${{ github.event_name != 'push' && '--baglanti' || '' }}
       # Fotoğraflar: yerin kendi Wikidata kimliğindeki görsel + Commons lisansı (isimle eşleştirme yok)
       - name: Fotoğraf listesini yenile
         if: github.event_name != 'push'
         continue-on-error: true
         timeout-minutes: 20
         run: node arac/gorsel.mjs
-      # Rehber metinleri: icerik/kaynak/*.json denetlenir ve yerlere kesin kimlikle bağlanır
-      - name: Rehber içeriklerini hazırla
-        continue-on-error: true
-        run: node arac/icerik.mjs ${{ github.event_name != 'push' && '--baglanti' || '' }}
       - name: Yeni listeyi depoya kaydet
         if: always() && github.event_name != 'push'
         run: |
